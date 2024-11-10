@@ -1,0 +1,805 @@
+openapi: 3.0.0
+info:
+  description: WASAText app backend REST API
+  title: WASAText API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: "Login"
+    description: "Endpoints for login."
+  - name: "User"
+    description: "Endpoints for user operations."
+  - name: "Profile picture"
+    description: "Endpoints for profile picture operations."
+  - name: "Conversation"
+    description: "Endpoints for conversation operations."
+  - name: "Message"
+    description: "Endpoints for message operations."
+  - name: "Comment"
+    description: "Endpoints for comment operations."
+  - name: "Group"
+    description: "Endpoints for group operations."
+
+paths:
+  ##doLogin
+  /session/login:
+    post:
+      tags: ["Login"]
+      summary: Logs in the user
+      description: |-
+        If the user does not exist, it will be created,
+        and an identifier is returned.
+        If the user exists, the user identifier is returned.  
+      operationId: doLogin
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Maria
+                  pattern: "^.*?$"
+                  minLength: 3
+                  maxLength: 16
+        required: true
+      responses:
+        "201":
+          description: User log-in action successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  identifier:
+                    type: string
+                    example: "abcdef012345"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ##doLogout
+  /session/logout:
+    post:
+      tags: ["Login"]
+      summary: Logs out the user
+      description: |-
+        Ends the user's session and invalidates the token if applicable.
+      operationId: doLogout
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                identifier:
+                  type: string
+                  example: "abcdef012345"
+        required: true
+      responses:
+        "200":
+          description: User log-out action successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User logged out successfully."
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ##getUserProfile
+  /users/{username}/profile:
+    get:
+      parameters:
+      - $ref: "#/components/parameters/username"
+      tags: ["User"]
+      summary: "Get profile data of a user."
+      description: "Retrieve a user's profile data by username."
+      operationId: getUserOProfile
+      responses:
+        "200":
+          description: "Profile loaded."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: "fiore_rossi"
+                  screenName:
+                    type: string
+                    example: "Fiore Rossi"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" } 
+        
+  ##getUserPicture
+  /users/{username}/picture:
+    parameters:
+      - $ref: "#/components/parameters/username"
+    get:
+      tags: ["Profile picture"]
+      summary: "Get profile picture of a user."
+      description: "Get a user's profile picture."
+      operationId: getUserPicture
+      responses:
+        "200":
+          description: "Picture loaded."
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ##setMyPhoto
+    put:
+      tags: ["Profile picture"]
+      summary: "Upload profile picture."
+      description: |-
+        The user uploads a profile picture.
+      operationId: uploadProfilePicture
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+                  description: "The picture to upload."
+      responses:
+        "200":
+          description: "Picture uploaded."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Picture uploaded successfully."
+                  profilePictureUrl:
+                    type: string
+                    format: uri
+                    example: "https://example.com/profiles/user_uploaded.jpg"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ##setMyUserName
+  /users/{username}:
+    put:
+      parameters:
+      - $ref: "#/components/parameters/username"
+      tags: ["User"]
+      summary: "Update username."
+      description: |-
+        Updates the username for the user unless such a username is already taken
+        by another user.
+      operationId: setMyUsername
+      requestBody:
+        description: "Username"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+        required: true
+      responses:
+        "200":
+          description: "Username updated successfully"
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: "new_username"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "409":
+          description: "Username already taken"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "This username is already taken. Please choose a different one."
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ##getMyConversations
+  /users/{username}/conversations:
+    parameters:
+      - $ref: "#/components/parameters/username"
+    get:
+      tags: ["Conversation"]
+      summary: "Get a user's conversations."
+      description: "Get a user's conversations. Only the user can access their conversations."
+      operationId: getMyConversations
+      responses:
+        "200":
+          description: "Conversations retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ##getConversation
+  /users/{username}/conversations/{conversationId}:
+    parameters:
+      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/conversationId"
+    get:
+      tags: ["Conversation"]
+      summary: "Get a specific conversation."
+      description: "Get a user's specific conversations. Only the user can access their conversations."
+      operationId: getConversation
+      responses:
+        "200":
+          description: "Conversation details retrieved successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ##sendMessage
+  /users/{username}/conversations/{conversationId}/messages/:
+    parameters:
+      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/conversationId"
+    post:
+      tags: ["Message"]
+      summary: "Send a new message."
+      description: "Send a message from the logged-in user to another user"
+      operationId: sendMessage
+      requestBody:
+        description: "The content of the message to be sent"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: "Type of message content (e.g., 'text' or 'image')."
+                  example: "text"
+                content:
+                  type: string
+                  description: "Message text or image URL, depending on the type."
+                  example: "Hey there."
+              required:
+                - type
+                - content
+      responses:
+        "201":
+          description: "Message sent."
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ##forwardMessage
+  /users/{username}/conversations/{conversationId}/messages/{messageId}/forward:
+    parameters:
+      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/conversationId"
+      - $ref: "#/components/parameters/messageId"
+    post:
+      tags: ["Message"]
+      summary: "Forward a message."
+      description: "Forward a message from one user to another."
+      operationId: forwardMessage
+      requestBody:
+        description: "The target conversation or recipient for the forwarded message."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                targetConversationId:
+                  type: string
+                  description: "ID of the conversation to forward the message to."
+                  example: "5678"
+                recipientUsername:
+                  type: string
+                  description: "Username of the recipient if forwarding directly to another user."
+                  example: "user_name"
+              required:
+                - targetConversationId
+      responses:
+        "200":
+          description: "Message forwarded successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ## deleteMessage
+  /users/{username}/conversations/{conversationId}/messages/{messageId}:
+    parameters:
+      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/conversationId"
+      - $ref: "#/components/parameters/messageId"
+    delete:
+      tags: ["Message"]
+      summary: "Delete a message."
+      description: "Delete a specific message from a conversation."
+      operationId: deleteMessage
+      responses:
+        "204":
+          description: "Message deleted successfully."
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ##commentMessage
+  /users/{username}/conversations/{conversationId}/messages/{messageId}/comments:
+    parameters:
+      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/conversationId"
+      - $ref: "#/components/parameters/messageId"
+    post:
+      tags: ["Comment"]
+      summary: "Add an emoji reaction to a message."
+      description: "Leave an emoji reaction on another user's message."
+      operationId: commentMessage
+      requestBody:
+        description: "The emoji reaction to be added to the message."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emoji:
+                  type: string
+                  description: "The emoji reaction to add to the message."
+                  example: "👍"
+              required:
+                - emoji
+      responses:
+        "200":
+          description: "Emoji reaction added successfully."
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+  
+  ## uncommentMessage
+    delete:
+      tags: ["Comment"]
+      summary: "Delete an emoji reaction from a message."
+      description: "Delete a specific emoji reaction from a message."
+      operationId: deleteComment
+      responses:
+        "204":
+          description: "Comment deleted successfully."
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ## setGroupPhoto
+  /users/{username}/groups/{groupId}/photo:
+    parameters:
+      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/groupId"
+    put:
+      tags: ["Group"]
+      summary: "Upload group picture."
+      description: "Allows an admin to upload a picture for a group they manage."
+      operationId: uploadGroupPicture
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+                  description: "The picture to upload for the group."
+      responses:
+        "200":
+          description: "Group picture uploaded."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Group picture uploaded successfully."
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ## createGroup
+  /users/{username}/groups:
+    parameters:
+      - $ref: "#/components/parameters/username"
+    post:
+      tags: ["Group"]
+      summary: "Create a new group."
+      description: "Create a new group chat with the logged-in user as the admin."
+      operationId: createGroup
+      requestBody:
+        description: "Details of the new group."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                groupName:
+                  type: string
+                  description: "The name of the group."
+                  example: "The Clique"
+                description:
+                  type: string
+                  description: "A short description of the group."
+                  example: "Group for our band."
+                members:
+                  type: array
+                  items:
+                    type: string
+                  description: "List of usernames to add to the group."
+                  example: ["Anna", "Billie", "Karl"]
+              required:
+                - groupName
+                - members
+      responses:
+        "201":
+          description: "Group created successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groupId:
+                    type: string
+                    description: "The unique identifier of the newly created group."
+                    example: "group12345"
+                  groupName:
+                    type: string
+                    description: "The name of the created group."
+                    example: "The Clique"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "409":
+          description: "A group with the same name already exists."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Group name already in use."
+        "500": { $ref: "#/components/responses/InternalServerError" }
+    
+  ## addToGroup
+  /users/{username}/groups/{groupId}/members:
+    parameters:
+      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/groupId"
+    post:
+      tags: ["Group"]
+      summary: "Add a member to a group."
+      description: "Add a specified user to an existing group."
+      operationId: addToGroup
+      requestBody:
+        description: "The username of the member to be added to the group."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newMemberUsername:
+                  type: string
+                  description: "The username of the new member to add."
+                  example: "slow_koala"
+              required:
+                - newMemberUsername
+      responses:
+        "200":
+          description: "Member added successfully."
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ## leaveGroup
+  /users/{username}/groups/{groupId}/members/{memberUsername}:
+    parameters:
+      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/groupId"
+      - name: memberUsername
+        in: path
+        required: true
+        schema:
+          type: string
+        description: "The username of the member who wants to leave the group."
+    delete:
+      tags: ["Group"]
+      summary: "Leave a group."
+      description: "Allows a user to leave an existing group."
+      operationId: leaveGroup
+      responses:
+        "204":
+          description: "User successfully left the group."
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409":
+          description: "User is already a member of the group."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User is already in the group."
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+components:
+  schemas:
+
+    User:
+      title: User
+      description: "This object represents a single User."
+      type: object
+      properties:
+        username:
+          description: "Alias for the User."
+          type: string
+          pattern: '^[^\s]+$'
+          minLength: 3
+          maxLength: 16
+          example: "slow_koala"
+          readOnly: false
+        id:
+          description: "Unique identifier for each user that allows username changing."
+          type: integer
+          example: 1
+          readOnly: true
+      required:
+        - username
+        - id
+        
+    Conversation:
+      type: object
+      properties:
+        conversationId:
+          type: string
+          description: "Unique identifier for the conversation."
+          example: "abc123"
+        participants:
+          type: array
+          items:
+            type: string
+            description: "Username of a participant in the conversation."
+          example: ["Fiore Rossi", "Ale Bianchi"]
+        lastMessage:
+          type: string
+          description: "Content of the last message in the conversation."
+          example: "Hi, how are you doing?"
+        updatedAt:
+          type: string
+          format: date-time
+          description: "Timestamp of the last message in the conversation."
+          example: "2024-10-23T07:05:00Z"
+
+    Message:
+      title: Message
+      description: "This object represents a single message."
+      type: object
+      properties:
+        id:
+          description: "Unique identifier for each user that allows username changing."
+          type: integer
+          example: 1
+          readOnly: true
+        timestamp:
+          description: "Timestamp when the message was sent."
+          type: string
+          format: date-time
+          example: "2023-10-19T15:23:00Z"
+          readOnly: true
+        preview:
+          description: "A preview of the message, either a text snippet for text messages or a thumbnail URL for image messages."
+          type: object
+          properties:
+            type:
+                description: "Type of preview, either 'text' or 'image'."
+                type: string
+                enum: ["text", "image"]
+                example: "text"
+            content:
+                description: "The actual preview content. This is either a text snippet or a URL to a thumbnail image."
+                type: string
+                example: "This is a preview of the message content."
+            thumbnailUrl:
+                description: "URL of the thumbnail image if the message is an image."
+                type: string
+                format: uri
+                example: "https://example.com/path/to/thumbnail.jpg"
+          required:
+          - type
+          - content
+        comments:
+          description: "List of emoji reactions to the message."
+          type: array
+          items:
+            type: object
+            properties:
+              emoji:
+                description: "The emoji used to react to the message."
+                type: string
+                example: "👍"
+              userId:
+                description: "Unique identifier of the user who added the reaction."
+                type: integer
+                example: 42
+              timestamp:
+                description: "Timestamp when the reaction was added."
+                type: string
+                format: date-time
+                example: "2023-10-19T15:23:00Z"
+                readOnly: true
+            required:
+              - emoji
+              - userId
+              - timestamp
+        messageStatus:
+          description: "Indicates the sender’s username if the message was received, or checkmarks for sent message status."
+          type: object
+          oneOf:
+              - properties:
+                    type:
+                        description: "Specifies that the message was received by the user."
+                        type: string
+                        enum: ["received"]
+                    senderUsername:
+                        description: "Username of the sender if the message was received by the user."
+                        type: string
+                        example: "slow_koala"
+                required:
+                    - type
+                    - senderUsername
+              - properties:
+                    type:
+                        description: "Specifies that the message was sent by the user."
+                        type: string
+                        enum: ["sent"]
+                    checkmarks:
+                        description: "Status of the sent message. One checkmark for 'sent', two for 'delivered'."
+                        type: integer
+                        enum: [1, 2]
+                        example: 2
+                required:
+                    - type
+                    - checkmarks
+        content:
+          description: "The content of the message, which can be either text or an image."
+          type: object
+          properties:
+            type:
+              description: "Type of content, either 'text' or 'image'."
+              type: string
+              enum: ["text", "image"]
+              example: "text"
+            text:
+                description: "The text content of the message, present only if the type is 'text'."
+                type: string
+                example: "Hey bestie."
+                nullable: true
+            imageUrl:
+                description: "URL of the image if the message contains an image."
+                type: string
+                format: uri
+                example: "https://example.com/path/to/image.jpg"
+                nullable: true
+          required:
+            - type
+        
+  responses:
+  
+    BadRequest:
+      description: "Invalid/malformed request."
+      
+    Unauthorized:
+      description: "Authentication required."
+      
+    InternalServerError:
+      description: "Server currently unavailable."
+
+    NotFound:
+      description: "Resource not found."
+
+    Forbidden:
+      description: "The operation is forbidden."
+
+  parameters:
+    username:
+      name: username
+      in: path
+      required: true
+      description: "Alias for the User."
+      schema:
+        type: string
+        minLength: 6
+        maxLength: 30
+        example: booklover
+    
+    conversationId:
+      name: conversationId
+      in: path
+      required: true
+      description: "ID for a conversation."
+      schema:
+        type: string
+        minLength: 6
+        maxLength: 30
+        example: convo123
+
+    messageId:
+      name: messageId
+      in: path
+      required: true
+      description: "ID for a message."
+      schema:
+        type: string
+        minLength: 6
+        maxLength: 30
+        example: message123
+
+    groupId:
+      name: groupId
+      in: path
+      required: true
+      description: "ID for a group."
+      schema:
+        type: string
+        minLength: 6
+        maxLength: 30
+        example: group123
