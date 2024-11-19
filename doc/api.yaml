@@ -102,7 +102,7 @@ paths:
       tags: ["User"]
       summary: "Get profile data of a user."
       description: "Retrieve a user's profile data by username."
-      operationId: getUserOProfile
+      operationId: getUserProfile
       responses:
         "200":
           description: "Profile loaded."
@@ -244,6 +244,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/Conversation"
+                required:
+                  - conversations
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -592,7 +594,7 @@ components:
       description: "This object represents a single User."
       type: object
       properties:
-        current_username:
+        username:
           description: "Alias for the User."
           type: string
           pattern: '^[^\s]+$'
@@ -685,7 +687,7 @@ components:
                 description: "The emoji used to react to the message."
                 type: string
                 example: "👍"
-              userId:
+              user_id:
                 description: "Unique identifier of the user who added the reaction."
                 type: integer
                 minimum: 0 
@@ -699,9 +701,8 @@ components:
                 readOnly: true
             required:
               - emoji
-              - userId
+              - user_id
               - timestamp
-          default: []
         message_status:
           description: "Indicates the sender’s username if the message was received, or checkmarks for sent message status."
           type: object
@@ -755,6 +756,12 @@ components:
                 nullable: true
           required:
             - type
+      required:
+      - id
+      - timestamp
+      - preview
+      - comments
+      - content
         
   responses:
   
