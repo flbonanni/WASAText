@@ -95,7 +95,7 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   ##getUserProfile
-  /users/{current_username}/profile:
+  /users/{username}/profile:
     get:
       parameters:
       - $ref: "#/components/parameters/username"
@@ -111,7 +111,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  username:
+                  user_handle:
                     type: string
                     example: "fiore_rossi"
                   screen_name:
