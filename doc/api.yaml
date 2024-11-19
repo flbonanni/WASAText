@@ -594,7 +594,7 @@ components:
       description: "This object represents a single User."
       type: object
       properties:
-        username:
+        current_username:
           description: "Alias for the User."
           type: string
           pattern: '^[^\s]+$'
