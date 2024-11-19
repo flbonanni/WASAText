@@ -4,7 +4,7 @@ info:
   title: WASAText API
   version: 1.0.0
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:3000/v1
 
 tags:
   - name: "Login"
@@ -114,7 +114,7 @@ paths:
                   username:
                     type: string
                     example: "fiore_rossi"
-                  screenName:
+                  screen_name:
                     type: string
                     example: "Fiore Rossi"
         "400": { $ref: "#/components/responses/BadRequest" }
@@ -172,9 +172,9 @@ paths:
                   message:
                     type: string
                     example: "Picture uploaded successfully."
-                  profilePictureUrl:
+                  profile_picture_url:
                     type: string
-                    format: uri
+                    format: url
                     example: "https://example.com/profiles/user_uploaded.jpg"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -238,18 +238,21 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Conversation"
+                type: object
+                properties:
+                  conversations:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Conversation"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   ##getConversation
-  /users/{username}/conversations/{conversationId}:
+  /users/{username}/conversations/{conversation_id}:
     parameters:
       - $ref: "#/components/parameters/username"
-      - $ref: "#/components/parameters/conversationId"
+      - $ref: "#/components/parameters/conversation_id"
     get:
       tags: ["Conversation"]
       summary: "Get a specific conversation."
@@ -267,10 +270,10 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   ##sendMessage
-  /users/{username}/conversations/{conversationId}/messages/:
+  /users/{username}/conversations/{conversation_id}/messages/:
     parameters:
       - $ref: "#/components/parameters/username"
-      - $ref: "#/components/parameters/conversationId"
+      - $ref: "#/components/parameters/conversation_id"
     post:
       tags: ["Message"]
       summary: "Send a new message."
@@ -303,11 +306,11 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   ##forwardMessage
-  /users/{username}/conversations/{conversationId}/messages/{messageId}/forward:
+  /users/{username}/conversations/{conversation_id}/messages/{message_id}/forward:
     parameters:
       - $ref: "#/components/parameters/username"
-      - $ref: "#/components/parameters/conversationId"
-      - $ref: "#/components/parameters/messageId"
+      - $ref: "#/components/parameters/conversation_id"
+      - $ref: "#/components/parameters/message_id"
     post:
       tags: ["Message"]
       summary: "Forward a message."
@@ -321,16 +324,16 @@ paths:
             schema:
               type: object
               properties:
-                targetConversationId:
+                target_conversation_id:
                   type: string
                   description: "ID of the conversation to forward the message to."
                   example: "5678"
-                recipientUsername:
+                recipient_username:
                   type: string
                   description: "Username of the recipient if forwarding directly to another user."
                   example: "user_name"
               required:
-                - targetConversationId
+                - target_conversation_id
       responses:
         "200":
           description: "Message forwarded successfully."
@@ -343,12 +346,12 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  ## deleteMessage
-  /users/{username}/conversations/{conversationId}/messages/{messageId}:
+  ##deleteMessage
+  /users/{username}/conversations/{conversation_id}/messages/{message_id}:
     parameters:
       - $ref: "#/components/parameters/username"
-      - $ref: "#/components/parameters/conversationId"
-      - $ref: "#/components/parameters/messageId"
+      - $ref: "#/components/parameters/conversation_id"
+      - $ref: "#/components/parameters/message_id"
     delete:
       tags: ["Message"]
       summary: "Delete a message."
@@ -364,11 +367,11 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   ##commentMessage
-  /users/{username}/conversations/{conversationId}/messages/{messageId}/comments:
+  /users/{username}/conversations/{conversation_id}/messages/{message_id}/comments:
     parameters:
       - $ref: "#/components/parameters/username"
-      - $ref: "#/components/parameters/conversationId"
-      - $ref: "#/components/parameters/messageId"
+      - $ref: "#/components/parameters/conversation_id"
+      - $ref: "#/components/parameters/message_id"
     post:
       tags: ["Comment"]
       summary: "Add an emoji reaction to a message."
@@ -396,7 +399,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
   
-  ## uncommentMessage
+  ##uncommentMessage
     delete:
       tags: ["Comment"]
       summary: "Delete an emoji reaction from a message."
@@ -411,11 +414,11 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  ## setGroupPhoto
-  /users/{username}/groups/{groupId}/photo:
+  ##setGroupPhoto
+  /users/{username}/groups/{group_id}/photo:
     parameters:
       - $ref: "#/components/parameters/username"
-      - $ref: "#/components/parameters/groupId"
+      - $ref: "#/components/parameters/group_id"
     put:
       tags: ["Group"]
       summary: "Upload group picture."
@@ -449,7 +452,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  ## createGroup
+  ##createGroup
   /users/{username}/groups:
     parameters:
       - $ref: "#/components/parameters/username"
@@ -466,7 +469,7 @@ paths:
             schema:
               type: object
               properties:
-                groupName:
+                group_name:
                   type: string
                   description: "The name of the group."
                   example: "The Clique"
@@ -481,7 +484,7 @@ paths:
                   description: "List of usernames to add to the group."
                   example: ["Anna", "Billie", "Karl"]
               required:
-                - groupName
+                - group_name
                 - members
       responses:
         "201":
@@ -491,11 +494,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  groupId:
+                  group_id:
                     type: string
                     description: "The unique identifier of the newly created group."
                     example: "group12345"
-                  groupName:
+                  group_name:
                     type: string
                     description: "The name of the created group."
                     example: "The Clique"
@@ -513,11 +516,11 @@ paths:
                     example: "Group name already in use."
         "500": { $ref: "#/components/responses/InternalServerError" }
     
-  ## addToGroup
-  /users/{username}/groups/{groupId}/members:
+  ##addToGroup
+  /users/{username}/groups/{group_id}/members:
     parameters:
       - $ref: "#/components/parameters/username"
-      - $ref: "#/components/parameters/groupId"
+      - $ref: "#/components/parameters/group_id"
     post:
       tags: ["Group"]
       summary: "Add a member to a group."
@@ -531,12 +534,12 @@ paths:
             schema:
               type: object
               properties:
-                newMemberUsername:
+                new_member_username:
                   type: string
                   description: "The username of the new member to add."
                   example: "slow_koala"
               required:
-                - newMemberUsername
+                - new_member_username
       responses:
         "200":
           description: "Member added successfully."
@@ -546,12 +549,12 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  ## leaveGroup
-  /users/{username}/groups/{groupId}/members/{memberUsername}:
+  ##leaveGroup
+  /users/{username}/groups/{group_id}/members/{member_username}:
     parameters:
       - $ref: "#/components/parameters/username"
-      - $ref: "#/components/parameters/groupId"
-      - name: memberUsername
+      - $ref: "#/components/parameters/group_id"
+      - name: member_username
         in: path
         required: true
         schema:
@@ -589,7 +592,7 @@ components:
       description: "This object represents a single User."
       type: object
       properties:
-        username:
+        current_username:
           description: "Alias for the User."
           type: string
           pattern: '^[^\s]+$'
@@ -600,6 +603,8 @@ components:
         id:
           description: "Unique identifier for each user that allows username changing."
           type: integer
+          minimum: 0 
+          maximum: 9999999
           example: 1
           readOnly: true
       required:
@@ -609,7 +614,7 @@ components:
     Conversation:
       type: object
       properties:
-        conversationId:
+        conversation_id:
           type: string
           description: "Unique identifier for the conversation."
           example: "abc123"
@@ -619,15 +624,17 @@ components:
             type: string
             description: "Username of a participant in the conversation."
           example: ["Fiore Rossi", "Ale Bianchi"]
-        lastMessage:
+        last_message:
           type: string
           description: "Content of the last message in the conversation."
           example: "Hi, how are you doing?"
-        updatedAt:
+        updated_at:
           type: string
           format: date-time
           description: "Timestamp of the last message in the conversation."
           example: "2024-10-23T07:05:00Z"
+      required:
+        - participants
 
     Message:
       title: Message
@@ -637,6 +644,8 @@ components:
         id:
           description: "Unique identifier for each user that allows username changing."
           type: integer
+          minimum: 0 
+          maximum: 9999999
           example: 1
           readOnly: true
         timestamp:
@@ -658,10 +667,10 @@ components:
                 description: "The actual preview content. This is either a text snippet or a URL to a thumbnail image."
                 type: string
                 example: "This is a preview of the message content."
-            thumbnailUrl:
+            thumbnail_url:
                 description: "URL of the thumbnail image if the message is an image."
                 type: string
-                format: uri
+                format: url
                 example: "https://example.com/path/to/thumbnail.jpg"
           required:
           - type
@@ -679,6 +688,8 @@ components:
               userId:
                 description: "Unique identifier of the user who added the reaction."
                 type: integer
+                minimum: 0 
+                maximum: 9999999
                 example: 42
               timestamp:
                 description: "Timestamp when the reaction was added."
@@ -690,7 +701,8 @@ components:
               - emoji
               - userId
               - timestamp
-        messageStatus:
+          default: []
+        message_status:
           description: "Indicates the sender’s username if the message was received, or checkmarks for sent message status."
           type: object
           oneOf:
@@ -699,13 +711,13 @@ components:
                         description: "Specifies that the message was received by the user."
                         type: string
                         enum: ["received"]
-                    senderUsername:
+                    sender_username:
                         description: "Username of the sender if the message was received by the user."
                         type: string
                         example: "slow_koala"
                 required:
                     - type
-                    - senderUsername
+                    - sender_username
               - properties:
                     type:
                         description: "Specifies that the message was sent by the user."
@@ -714,6 +726,8 @@ components:
                     checkmarks:
                         description: "Status of the sent message. One checkmark for 'sent', two for 'delivered'."
                         type: integer
+                        minimum: 0 
+                        maximum: 9999999
                         enum: [1, 2]
                         example: 2
                 required:
@@ -733,10 +747,10 @@ components:
                 type: string
                 example: "Hey bestie."
                 nullable: true
-            imageUrl:
+            image_url:
                 description: "URL of the image if the message contains an image."
                 type: string
-                format: uri
+                format: url
                 example: "https://example.com/path/to/image.jpg"
                 nullable: true
           required:
@@ -771,8 +785,8 @@ components:
         maxLength: 30
         example: booklover
     
-    conversationId:
-      name: conversationId
+    conversation_id:
+      name: conversation_id
       in: path
       required: true
       description: "ID for a conversation."
@@ -782,8 +796,8 @@ components:
         maxLength: 30
         example: convo123
 
-    messageId:
-      name: messageId
+    message_id:
+      name: message_id
       in: path
       required: true
       description: "ID for a message."
@@ -793,8 +807,8 @@ components:
         maxLength: 30
         example: message123
 
-    groupId:
-      name: groupId
+    group_id:
+      name: group_id
       in: path
       required: true
       description: "ID for a group."
