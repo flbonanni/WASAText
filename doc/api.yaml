@@ -610,7 +610,7 @@ components:
           example: 1
           readOnly: true
       required:
-        - username
+        - current_username
         - id
         
     Conversation:
