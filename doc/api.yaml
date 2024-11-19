@@ -206,7 +206,7 @@ paths:
               schema: 
                 type: object
                 properties:
-                  username:
+                  user_handle:
                     type: string
                     example: "new_username"
         "400": { $ref: "#/components/responses/BadRequest" }
