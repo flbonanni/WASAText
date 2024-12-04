@@ -22,6 +22,9 @@ tags:
   - name: "Group"
     description: "Endpoints for group operations."
 
+security:
+  - bearerAuth: []
+
 paths:
   ##doLogin
   /session/login:
@@ -650,7 +653,6 @@ paths:
 
 components:
   schemas:
-
     User:
       title: User
       description: "This object represents a single User."
@@ -825,6 +827,11 @@ components:
       - comments
       - content
         
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
   responses:
   
     BadRequest:
