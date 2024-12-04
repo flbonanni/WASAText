@@ -149,7 +149,7 @@ paths:
       summary: "Upload profile picture."
       description: |-
         The user uploads a profile picture.
-      operationId: uploadProfilePicture
+      operationId: setMyPhoto
       requestBody:
         required: true
         content:
@@ -190,7 +190,7 @@ paths:
       description: |-
         Updates the username for the user unless such a username is already taken
         by another user.
-      operationId: setMyUsername
+      operationId: setMysetMyUserName
       requestBody:
         description: "Username"
         content:
@@ -422,7 +422,7 @@ paths:
       tags: ["Comment"]
       summary: "Delete an emoji reaction from a message."
       description: "Delete a specific emoji reaction from a message."
-      operationId: deleteComment
+      operationId: uncommentMessage
       responses:
         "204":
           description: "Comment deleted successfully."
@@ -441,7 +441,7 @@ paths:
       tags: ["Group"]
       summary: "Upload group picture."
       description: "Allows an admin to upload a picture for a group they manage."
-      operationId: uploadGroupPicture
+      operationId: setGroupPhoto
       requestBody:
         required: true
         content:
@@ -479,7 +479,7 @@ paths:
       tags: ["Group"]
       summary: "Update group name."
       description: "Allows an admin to update the name of a group they manage."
-      operationId: updateGroupName
+      operationId: setGroupName
       requestBody:
         required: true
         content:
