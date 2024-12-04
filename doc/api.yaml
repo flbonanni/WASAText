@@ -42,9 +42,11 @@ paths:
           application/json:
             schema:
               type: object
+              description: "Represents a user's name, with validation rules for length and format."
               properties:
                 name:
                   type: string
+                  description: "The user's name, which must be between 3 and 16 characters in length and match the specified pattern."
                   example: Maria
                   pattern: "^.*?$"
                   minLength: 3
@@ -57,9 +59,11 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents a unique identifier, typically used to reference an entity or object in the system."
                 properties:
                   identifier:
                     type: string
+                    description: "A unique identifier for an entity, often used to retrieve or reference specific objects."
                     example: "abcdef012345"
         "400": { $ref: "#/components/responses/BadRequest" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -78,9 +82,11 @@ paths:
           application/json:
             schema:
               type: object
+              description: "Represents an identifier, typically used to uniquely reference an entity or object in the system."
               properties:
                 identifier:
                   type: string
+                  description: "A unique identifier for the entity or object."
                   example: "abcdef012345"
         required: true
       responses:
@@ -90,9 +96,11 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents a response confirming the successful logout of a user."
                 properties:
                   message:
                     type: string
+                    description: "A message confirming that the user has logged out successfully."
                     example: "User logged out successfully."
         "400": { $ref: "#/components/responses/BadRequest" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -113,12 +121,15 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents user profile information, including the user’s handle and display name."
                 properties:
                   user_handle:
                     type: string
+                    description: "The unique handle or username of the user."
                     example: "fiore_rossi"
                   screen_name:
                     type: string
+                    description: "The display name of the user, typically shown on their profile."
                     example: "Fiore Rossi"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -140,6 +151,7 @@ paths:
             image/jpeg:
               schema:
                 type: string
+                description: "Represents file uploads for the profile picture."
                 format: binary
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -159,6 +171,7 @@ paths:
           multipart/form-data:
             schema:
               type: object
+              description: "Represents a request to upload a picture, typically used for profile or group images."
               properties:
                 photo:
                   type: string
@@ -171,12 +184,15 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents the response after successfully uploading a profile picture, including the confirmation message and the URL of the uploaded image."
                 properties:
                   message:
                     type: string
+                    description: "A message confirming the successful upload of the profile picture."
                     example: "Picture uploaded successfully."
                   profile_picture_url:
                     type: string
+                    description: "The URL where the uploaded profile picture can be accessed."
                     format: url
                     example: "https://example.com/profiles/user_uploaded.jpg"
         "400": { $ref: "#/components/responses/BadRequest" }
@@ -208,6 +224,7 @@ paths:
             application/json:
               schema: 
                 type: object
+                description: "Represents a request to set or update a user's handle (username)."
                 properties:
                   user_handle:
                     type: string
@@ -220,9 +237,11 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents a response indicating that the username is already taken and cannot be used."
                 properties:
                   message:
                     type: string
+                    description: "A message informing the user that the selected username is already in use."
                     example: "This username is already taken. Please choose a different one."
         "500": { $ref: "#/components/responses/InternalServerError" }
 
@@ -242,6 +261,7 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents a collection of conversations, typically used to retrieve a list of conversations."
                 properties:
                   conversations:
                     type: array
@@ -291,6 +311,7 @@ paths:
           application/json:
             schema:
               type: object
+              description: "Represents the structure of a message, including its type and content."
               properties:
                 type:
                   type: string
@@ -310,9 +331,11 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents a response confirming the successful sending of a message."
                 properties:
                   message:
                     type: string
+                    description: "A message confirming the successful delivery of the message."
                     example: "Message sent successfully."
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -336,6 +359,7 @@ paths:
           application/json:
             schema:
               type: object
+              description: "Represents the data required to forward a message to another conversation or user."
               properties:
                 target_conversation_id:
                   type: string
@@ -397,6 +421,7 @@ paths:
           application/json:
             schema:
               type: object
+              description: "Represents the data required to add an emoji reaction to a message."
               properties:
                 emoji:
                   type: string
@@ -411,6 +436,7 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents a response indicating the success of an operation, such as adding an emoji reaction."
                 properties:
                   message:
                     type: string
@@ -451,6 +477,7 @@ paths:
           multipart/form-data:
             schema:
               type: object
+              description: "Represents a request to upload a new picture for the group."
               properties:
                 photo:
                   type: string
@@ -463,9 +490,11 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents a response indicating the success of an operation, such as uploading a group picture."
                 properties:
                   message:
                     type: string
+                    description: "A message confirming the successful upload of the group picture."
                     example: "Group picture uploaded successfully."
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -489,6 +518,7 @@ paths:
           application/json:
             schema:
               type: object
+              description: "Represents a request to update the name of an existing group."
               properties:
                 name:
                   type: string
@@ -501,9 +531,11 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents a response indicating the success of an operation, such as updating the group name."
                 properties:
                   message:
                     type: string
+                    description: "A message confirming the successful update of the group name."
                     example: "Group name updated successfully."
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -527,6 +559,7 @@ paths:
           application/json:
             schema:
               type: object
+              description: "Represents the data required to create or update a group, including the group’s name, description, and list of members."
               properties:
                 group_name:
                   type: string
@@ -552,6 +585,7 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents the response after successfully creating a new group, including the group's unique identifier and name."
                 properties:
                   group_id:
                     type: string
@@ -569,6 +603,7 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents a response indicating an error or conflict, such as when a group name is already taken."
                 properties:
                   message:
                     type: string
@@ -592,6 +627,7 @@ paths:
           application/json:
             schema:
               type: object
+              description: "Represents a request to add a new member to the system or group."
               properties:
                 new_member_username:
                   type: string
@@ -606,6 +642,7 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents a response indicating the result of a member-related action."
                 properties:
                   message:
                     type: string
@@ -645,6 +682,7 @@ paths:
             application/json:
               schema:
                 type: object
+                description: "Represents an error or informational response for group-related actions."
                 properties:
                   message:
                     type: string
@@ -679,6 +717,7 @@ components:
         
     Conversation:
       type: object
+      description: "Represents a conversation between participants, including its metadata."
       properties:
         conversation_id:
           type: string
