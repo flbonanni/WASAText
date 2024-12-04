@@ -303,6 +303,14 @@ paths:
       responses:
         "201":
           description: "Message sent."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Message sent successfully."
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -396,6 +404,14 @@ paths:
       responses:
         "200":
           description: "Emoji reaction added successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Emoji reaction added successfully."
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -448,6 +464,44 @@ paths:
                   message:
                     type: string
                     example: "Group picture uploaded successfully."
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  ## setGroupName
+  /users/{username}/groups/{group_id}/name:
+    parameters:
+      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/group_id"
+    put:
+      tags: ["Group"]
+      summary: "Update group name."
+      description: "Allows an admin to update the name of a group they manage."
+      operationId: updateGroupName
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "The new name for the group."
+                  example: "My New Group Name"
+      responses:
+        "200":
+          description: "Group name updated."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Group name updated successfully."
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
@@ -545,6 +599,14 @@ paths:
       responses:
         "200":
           description: "Member added successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Member added successfully."
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
