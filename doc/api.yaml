@@ -249,6 +249,7 @@ paths:
                 properties:
                   user_handle:
                     type: string
+                    description: "The updated username for the user."
                     example: "new_username"
                     minLength: 3
                     maxLength: 30
@@ -292,6 +293,7 @@ paths:
                 properties:
                   conversations:
                     type: array
+                    description: "A list of conversations retrieved from the system."
                     items:
                       $ref: "#/components/schemas/Conversation"
                 required:
@@ -682,6 +684,7 @@ paths:
                 properties:
                   message:
                     type: string
+                    description: "A descriptive message stating that the group name is already in use."
                     example: "Group name already in use."
                     minLength: 10
                     maxLength: 100
@@ -727,6 +730,7 @@ paths:
                 properties:
                   message:
                     type: string
+                    description: "A confirmation message indicating that the member was added successfully."
                     example: "Member added successfully."
                     minLength: 10
                     maxLength: 100
@@ -773,6 +777,7 @@ paths:
                 properties:
                   message:
                     type: string
+                    description: "A detailed message indicating the error or status of the request."
                     example: "User is already in the group."
                     minLength: 10
                     maxLength: 100
@@ -818,6 +823,7 @@ components:
           pattern: "^[a-zA-Z0-9_]+$"  # Alphanumeric characters and underscores only
         participants:
           type: array
+          description: "A list of participants in the conversation, represented by their usernames."
           items:
             type: string
             description: "Username of a participant in the conversation."
