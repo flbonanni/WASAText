@@ -296,6 +296,8 @@ paths:
                     description: "A list of conversations retrieved from the system."
                     items:
                       $ref: "#/components/schemas/Conversation"
+                    minItems: 1
+                    maxItems: 50
                 required:
                   - conversations
         "400": { $ref: "#/components/responses/BadRequest" }
@@ -645,6 +647,7 @@ paths:
                   description: "List of usernames to add to the group."
                   example: ["Anna", "Billie", "Karl"]
                   minItems: 1
+                  maxItems: 50
               required:
                 - group_name
                 - members
@@ -820,7 +823,7 @@ components:
           example: "abc123"
           minLength: 3
           maxLength: 50
-          pattern: "^[a-zA-Z0-9_]+$"  # Alphanumeric characters and underscores only
+          pattern: "^[a-zA-Z0-9_]+$"  
         participants:
           type: array
           description: "A list of participants in the conversation, represented by their usernames."
@@ -829,15 +832,16 @@ components:
             description: "Username of a participant in the conversation."
             minLength: 3
             maxLength: 30
-            pattern: "^[a-zA-Z0-9_]+$"  # Alphanumeric characters and underscores only
+            pattern: "^[a-zA-Z0-9_]+$"  
           example: ["Fiore Rossi", "Ale Bianchi"]
-          minItems: 2  # Ensures that there are at least two participants
+          minItems: 2  
+          maxItems: 50
         last_message:
           type: string
           description: "Content of the last message in the conversation."
           example: "Hi, how are you doing?"
-          minLength: 1  # Ensures message is not empty
-          maxLength: 500  # Limits the content length
+          minLength: 1  #
+          maxLength: 500  
           pattern: "^[a-zA-Z0-9 ]+$"
 
 
@@ -916,6 +920,8 @@ components:
               - emoji
               - user_id
               - timestamp
+          minItems: 1
+          maxItems: 50
         message_status:
           description: "Indicates the sender’s username if the message was received, or checkmarks for sent message status."
           type: object
@@ -982,21 +988,65 @@ components:
       scheme: bearer
 
   responses:
-  
     BadRequest:
       description: "Invalid/malformed request."
-      
+      content:
+        application/json:
+          schema:
+            type: object
+            description: "An error response indicating the request was malformed or invalid."
+            properties:
+              message:
+                type: string
+                example: "The request body is malformed."
+
     Unauthorized:
       description: "Authentication required."
-      
+      content:
+        application/json:
+          schema:
+            type: object
+            description: "An error response indicating that the user needs to authenticate."
+            properties:
+              message:
+                type: string
+                example: "Authentication is required to access this resource."
+
     InternalServerError:
       description: "Server currently unavailable."
+      content:
+        application/json:
+          schema:
+            type: object
+            description: "An error response indicating an internal server error."
+            properties:
+              message:
+                type: string
+                example: "The server is currently unavailable, please try again later."
 
     NotFound:
       description: "Resource not found."
+      content:
+        application/json:
+          schema:
+            type: object
+            description: "An error response indicating the requested resource could not be found."
+            properties:
+              message:
+                type: string
+                example: "The requested resource could not be found."
 
     Forbidden:
       description: "The operation is forbidden."
+      content:
+        application/json:
+          schema:
+            type: object
+            description: "An error response indicating that the operation is not allowed."
+            properties:
+              message:
+                type: string
+                example: "You do not have permission to perform this operation."
 
   parameters:
     username:
