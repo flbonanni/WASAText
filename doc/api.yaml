@@ -953,7 +953,7 @@ components:
                 required:
                     - type
                     - checkmarks
-        content:
+        message_content:
           description: "The content of the message, which can be either text or an image."
           type: object
           properties:
