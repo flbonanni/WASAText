@@ -65,6 +65,9 @@ paths:
                     type: string
                     description: "A unique identifier for an entity, often used to retrieve or reference specific objects."
                     example: "abcdef012345"
+                    minLength: 12
+                    maxLength: 12
+                    pattern: "^[a-zA-Z0-9]{12}$"
         "400": { $ref: "#/components/responses/BadRequest" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
@@ -88,6 +91,9 @@ paths:
                   type: string
                   description: "A unique identifier for the entity or object."
                   example: "abcdef012345"
+                  minLength: 12
+                  maxLength: 12
+                  pattern: "^[a-zA-Z0-9]{12}$"
         required: true
       responses:
         "200":
@@ -102,6 +108,9 @@ paths:
                     type: string
                     description: "A message confirming that the user has logged out successfully."
                     example: "User logged out successfully."
+                    minLength: 10
+                    maxLength: 100
+                    pattern: "^[a-zA-Z0-9 .,!?']+$"
         "400": { $ref: "#/components/responses/BadRequest" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
@@ -127,10 +136,16 @@ paths:
                     type: string
                     description: "The unique handle or username of the user."
                     example: "fiore_rossi"
+                    minLength: 3
+                    maxLength: 30
+                    pattern: "^[a-zA-Z0-9_]{3,30}$"
                   screen_name:
                     type: string
                     description: "The display name of the user, typically shown on their profile."
                     example: "Fiore Rossi"
+                    minLength: 2
+                    maxLength: 50
+                    pattern: "^[a-zA-Z ]{2,50}$"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" } 
@@ -190,11 +205,17 @@ paths:
                     type: string
                     description: "A message confirming the successful upload of the profile picture."
                     example: "Picture uploaded successfully."
+                    minLength: 10
+                    maxLength: 100
+                    pattern: "^[a-zA-Z0-9 .,!?']+$"
+
                   profile_picture_url:
                     type: string
                     description: "The URL where the uploaded profile picture can be accessed."
                     format: url
                     example: "https://example.com/profiles/user_uploaded.jpg"
+                    minLength: 15
+                    maxLength: 255
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -209,7 +230,7 @@ paths:
       description: |-
         Updates the username for the user unless such a username is already taken
         by another user.
-      operationId: setMysetMyUserName
+      operationId: setMyUserName
       requestBody:
         description: "Username"
         content:
@@ -229,6 +250,9 @@ paths:
                   user_handle:
                     type: string
                     example: "new_username"
+                    minLength: 3
+                    maxLength: 30
+                    pattern: "^[a-zA-Z0-9_]{3,30}$"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "409":
@@ -243,6 +267,9 @@ paths:
                     type: string
                     description: "A message informing the user that the selected username is already in use."
                     example: "This username is already taken. Please choose a different one."
+                    minLength: 10
+                    maxLength: 100
+                    pattern: "^[a-zA-Z0-9 .,!?']+$"
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   ##getMyConversations
@@ -317,10 +344,17 @@ paths:
                   type: string
                   description: "Type of message content (e.g., 'text' or 'image')."
                   example: "text"
+                  minLength: 3
+                  maxLength: 20
+                  pattern: "^[a-zA-Z]+$"
+
                 content:
                   type: string
                   description: "Message text or image URL, depending on the type."
                   example: "Hey there."
+                  minLength: 1
+                  maxLength: 500
+                  pattern: "^[a-zA-Z0-9 .,!?'\n]*$" 
               required:
                 - type
                 - content
@@ -337,6 +371,9 @@ paths:
                     type: string
                     description: "A message confirming the successful delivery of the message."
                     example: "Message sent successfully."
+                    minLength: 10
+                    maxLength: 100
+                    pattern: "^[a-zA-Z0-9 .,!?']+$"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -365,10 +402,17 @@ paths:
                   type: string
                   description: "ID of the conversation to forward the message to."
                   example: "5678"
+                  minLength: 1
+                  maxLength: 50
+                  pattern: "^[0-9]+$"  
+
                 recipient_username:
                   type: string
                   description: "Username of the recipient if forwarding directly to another user."
                   example: "user_name"
+                  minLength: 3
+                  maxLength: 30
+                  pattern: "^[a-zA-Z0-9_]{3,30}$" 
               required:
                 - target_conversation_id
       responses:
@@ -440,7 +484,11 @@ paths:
                 properties:
                   message:
                     type: string
+                    description: "A message confirming the successful completion of the operation."
                     example: "Emoji reaction added successfully."
+                    minLength: 10
+                    maxLength: 100
+                    pattern: "^[a-zA-Z0-9 .,!?']+$"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -496,6 +544,9 @@ paths:
                     type: string
                     description: "A message confirming the successful upload of the group picture."
                     example: "Group picture uploaded successfully."
+                    minLength: 10
+                    maxLength: 100
+                    pattern: "^[a-zA-Z0-9 .,!?']+$"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
@@ -524,6 +575,9 @@ paths:
                   type: string
                   description: "The new name for the group."
                   example: "My New Group Name"
+                  minLength: 3
+                  maxLength: 50
+                  pattern: "^[a-zA-Z0-9 ]+$"
       responses:
         "200":
           description: "Group name updated."
@@ -537,6 +591,9 @@ paths:
                     type: string
                     description: "A message confirming the successful update of the group name."
                     example: "Group name updated successfully."
+                    minLength: 10
+                    maxLength: 100
+                    pattern: "^[a-zA-Z0-9 .,!?']+$"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
@@ -565,16 +622,27 @@ paths:
                   type: string
                   description: "The name of the group."
                   example: "The Clique"
+                  minLength: 3
+                  maxLength: 50
+                  pattern: "^[a-zA-Z0-9 ]+$"
+
                 description:
                   type: string
                   description: "A short description of the group."
                   example: "Group for our band."
+                  minLength: 5
+                  maxLength: 200
+                  pattern: "^[a-zA-Z0-9 ]+$"
+
                 members:
                   type: array
                   items:
                     type: string
+                    minLength: 3
+                    maxLength: 30
                   description: "List of usernames to add to the group."
                   example: ["Anna", "Billie", "Karl"]
+                  minItems: 1
               required:
                 - group_name
                 - members
@@ -591,10 +659,17 @@ paths:
                     type: string
                     description: "The unique identifier of the newly created group."
                     example: "group12345"
+                    minLength: 8
+                    maxLength: 50
+                    pattern: "^[a-zA-Z0-9]+$"
+
                   group_name:
                     type: string
                     description: "The name of the created group."
                     example: "The Clique"
+                    minLength: 3
+                    maxLength: 50
+                    pattern: "^[a-zA-Z0-9 ]+$"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "409":
@@ -608,6 +683,9 @@ paths:
                   message:
                     type: string
                     example: "Group name already in use."
+                    minLength: 10
+                    maxLength: 100
+                    pattern: "^[a-zA-Z0-9 ]+$"
         "500": { $ref: "#/components/responses/InternalServerError" }
     
   ##addToGroup
@@ -633,6 +711,9 @@ paths:
                   type: string
                   description: "The username of the new member to add."
                   example: "slow_koala"
+                  minLength: 3
+                  maxLength: 30
+                  pattern: "^[a-zA-Z0-9_]+$"
               required:
                 - new_member_username
       responses:
@@ -647,6 +728,9 @@ paths:
                   message:
                     type: string
                     example: "Member added successfully."
+                    minLength: 10
+                    maxLength: 100
+                    pattern: "^[a-zA-Z0-9 ]+$"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
@@ -663,6 +747,9 @@ paths:
         required: true
         schema:
           type: string
+          minLength: 3
+          maxLength: 30
+          pattern: "^[a-zA-Z0-9_]+$"
         description: "The username of the member who wants to leave the group."
     delete:
       tags: ["Group"]
@@ -687,6 +774,9 @@ paths:
                   message:
                     type: string
                     example: "User is already in the group."
+                    minLength: 10
+                    maxLength: 100
+                    pattern: "^[a-zA-Z0-9 ]+$"
         "500": { $ref: "#/components/responses/InternalServerError" }
 
 components:
@@ -723,23 +813,27 @@ components:
           type: string
           description: "Unique identifier for the conversation."
           example: "abc123"
+          minLength: 3
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_]+$"  # Alphanumeric characters and underscores only
         participants:
           type: array
           items:
             type: string
             description: "Username of a participant in the conversation."
+            minLength: 3
+            maxLength: 30
+            pattern: "^[a-zA-Z0-9_]+$"  # Alphanumeric characters and underscores only
           example: ["Fiore Rossi", "Ale Bianchi"]
+          minItems: 2  # Ensures that there are at least two participants
         last_message:
           type: string
           description: "Content of the last message in the conversation."
           example: "Hi, how are you doing?"
-        updated_at:
-          type: string
-          format: date-time
-          description: "Timestamp of the last message in the conversation."
-          example: "2024-10-23T07:05:00Z"
-      required:
-        - participants
+          minLength: 1  # Ensures message is not empty
+          maxLength: 500  # Limits the content length
+          pattern: "^[a-zA-Z0-9 ]+$"
+
 
     Message:
       title: Message
@@ -768,15 +862,22 @@ components:
                 type: string
                 enum: ["text", "image"]
                 example: "text"
+                minLength: 3
+                maxLength: 10
             content:
                 description: "The actual preview content. This is either a text snippet or a URL to a thumbnail image."
                 type: string
                 example: "This is a preview of the message content."
+                minLength: 1
+                maxLength: 500
+                pattern: "^[a-zA-Z0-9 ]+$"
             thumbnail_url:
                 description: "URL of the thumbnail image if the message is an image."
                 type: string
                 format: url
                 example: "https://example.com/path/to/thumbnail.jpg"
+                minLength: 10
+                maxLength: 200
           required:
           - type
           - content
@@ -790,6 +891,9 @@ components:
                 description: "The emoji used to react to the message."
                 type: string
                 example: "👍"
+                minLength: 1
+                maxLength: 1
+                pattern: "^[\u0000-\uFFFF]+$"
               user_id:
                 description: "Unique identifier of the user who added the reaction."
                 type: integer
@@ -898,6 +1002,7 @@ components:
         type: string
         minLength: 6
         maxLength: 30
+        pattern: "^[a-zA-Z0-9_]{6,30}$"
         example: booklover
     
     conversation_id:
@@ -910,6 +1015,7 @@ components:
         minLength: 6
         maxLength: 30
         example: convo123
+        pattern: "^[a-zA-Z0-9_]+$"
 
     message_id:
       name: message_id
@@ -921,6 +1027,7 @@ components:
         minLength: 6
         maxLength: 30
         example: message123
+        pattern: "^[a-zA-Z0-9_]+$"
 
     group_id:
       name: group_id
@@ -932,3 +1039,4 @@ components:
         minLength: 6
         maxLength: 30
         example: group123
+        pattern: "^[a-zA-Z0-9_]+$"
