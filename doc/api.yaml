@@ -958,10 +958,10 @@ components:
           type: object
           properties:
             type:
-              description: "Type of content, either 'text' or 'image'."
-              type: string
-              enum: ["text", "image"]
-              example: "text"
+                description: "Type of content, either 'text' or 'image'."
+                type: string
+                enum: ["text", "image"]
+                example: "text"
             text:
                 description: "The text content of the message, present only if the type is 'text'."
                 type: string
@@ -980,7 +980,7 @@ components:
       - timestamp
       - preview
       - comments
-      - content
+      - message_content
         
   securitySchemes:
     bearerAuth:
