@@ -475,8 +475,8 @@ paths:
                   type: string
                   description: "The emoji reaction to add to the message."
                   example: "👍"
-                  minlength: 1
-                  maxlength: 1
+                  minLength: 1
+                  maxLength: 1
               required:
                 - emoji
       responses:
@@ -844,10 +844,11 @@ components:
           type: string
           description: "Content of the last message in the conversation."
           example: "Hi, how are you doing?"
-          minLength: 1  #
+          minLength: 1  
           maxLength: 500  
           pattern: "^[a-zA-Z0-9 ]+$"
-
+      required:
+        - participants
 
     Message:
       title: Message
