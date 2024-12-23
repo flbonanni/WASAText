@@ -475,6 +475,8 @@ paths:
                   type: string
                   description: "The emoji reaction to add to the message."
                   example: "👍"
+                  minlength: 1
+                  maxlength: 1
               required:
                 - emoji
       responses:
@@ -644,10 +646,12 @@ paths:
                     type: string
                     minLength: 3
                     maxLength: 30
+                    pattern: "^[a-zA-Z0-9 ]+$"
                   description: "List of usernames to add to the group."
                   example: ["Anna", "Billie", "Karl"]
                   minItems: 1
                   maxItems: 50
+                  pattern: "^[a-zA-Z0-9 ]+$"
               required:
                 - group_name
                 - members
@@ -863,6 +867,8 @@ components:
           format: date-time
           example: "2023-10-19T15:23:00Z"
           readOnly: true
+          minLength: 20  
+          maxLength: 30
         preview:
           description: "A preview of the message, either a text snippet for text messages or a thumbnail URL for image messages."
           type: object
@@ -915,6 +921,8 @@ components:
                 type: string
                 format: date-time
                 example: "2023-10-19T15:23:00Z"
+                minLength: 20
+                maxLength: 30
                 readOnly: true
             required:
               - emoji
@@ -935,6 +943,9 @@ components:
                         description: "Username of the sender if the message was received by the user."
                         type: string
                         example: "slow_koala"
+                        minLength: 3
+                        maxLength: 30
+                        pattern: "^[A-Za-z0-9_]*$"
                 required:
                     - type
                     - sender_username
@@ -967,12 +978,18 @@ components:
                 type: string
                 example: "Hey bestie."
                 nullable: true
+                minLength: 1
+                maxLength: 500
+                pattern: "^[A-Za-z0-9 !@#\\$%\\^&\\*()\\-=_+\\[\\]{};':\"\\\\|,.<>/?`~]*$"
             image_url:
                 description: "URL of the image if the message contains an image."
                 type: string
                 format: url
                 example: "https://example.com/path/to/image.jpg"
                 nullable: true
+                minLength: 5
+                maxLength: 2048
+                pattern: "^https?://[\\w.-]+(?:\\.[\\w.-]+)+(?:/[\\w._~:/?#[\\]@!$&'()*+,;=%-]*)?$"
           required:
             - type
       required:
@@ -999,6 +1016,9 @@ components:
               message:
                 type: string
                 example: "The request body is malformed."
+                minLength: 10
+                maxLength: 200
+                pattern: "^[A-Z].*\\.$"
 
     Unauthorized:
       description: "Authentication required."
@@ -1011,6 +1031,9 @@ components:
               message:
                 type: string
                 example: "Authentication is required to access this resource."
+                minLength: 10
+                maxLength: 200
+                pattern: "^[A-Z].*\\.$"
 
     InternalServerError:
       description: "Server currently unavailable."
@@ -1023,6 +1046,9 @@ components:
               message:
                 type: string
                 example: "The server is currently unavailable, please try again later."
+                minLength: 10
+                maxLength: 200
+                pattern: "^[A-Z].*\\.$"
 
     NotFound:
       description: "Resource not found."
@@ -1035,6 +1061,9 @@ components:
               message:
                 type: string
                 example: "The requested resource could not be found."
+                minLength: 10
+                maxLength: 200
+                pattern: "^[A-Z].*\\.$"
 
     Forbidden:
       description: "The operation is forbidden."
@@ -1047,6 +1076,9 @@ components:
               message:
                 type: string
                 example: "You do not have permission to perform this operation."
+                minLength: 10
+                maxLength: 200
+                pattern: "^[A-Z].*\\.$"
 
   parameters:
     username:
