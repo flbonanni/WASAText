@@ -657,8 +657,7 @@ paths:
                   description: "List of usernames to add to the group."
                   example: ["Anna", "Billie", "Karl"]
                   minItems: 1
-                  maxItems: 50
-                  pattern: "^[a-zA-Z0-9 ]+$"
+                  maxItems: 5
               required:
                 - group_name
                 - members
@@ -985,7 +984,6 @@ components:
                 description: "The text content of the message, present only if the type is 'text'."
                 type: string
                 example: "Hey bestie."
-                nullable: true
                 minLength: 1
                 maxLength: 500
                 pattern: "^[A-Za-z0-9 !@#\\$%\\^&\\*()\\-=_+\\[\\]{};':\"\\\\|,.<>/?`~]*$"
@@ -994,7 +992,6 @@ components:
                 type: string
                 format: url
                 example: "https://example.com/path/to/image.jpg"
-                nullable: true
                 minLength: 5
                 maxLength: 2048
                 pattern: "^https?://[\\w.-]+(?:\\.[\\w.-]+)+(?:/[\\w._~:/?#[\\]@!$&'()*+,;=%-]*)?$"
