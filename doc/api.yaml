@@ -478,10 +478,10 @@ paths:
                 emoji:
                   type: string
                   description: "The emoji reaction to add to the message."
-                  example: "😀"
+                  example: "🌈"
                   minLength: 1
                   maxLength: 1
-                  pattern: "^[\u1F300-\u1F5FF\u1F600-\u1F64F\u1F680-\u1F6FF\u1F900-\u1F9FF\u1FA70-\u1FAFF]+$"
+                  pattern: "^[\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]]+$"
               required:
                 - emoji
       responses:
