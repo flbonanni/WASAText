@@ -481,7 +481,7 @@ paths:
                   example: "👍"
                   minLength: 1
                   maxLength: 1
-                  pattern: "^(?:[\u0023-\u0039\ufe0f]|[\u200d-\ud83e\udd2f])$"
+                  pattern: "^[\u1F600-\u1F64F\u1F300-\u1F5FF\u1F680-\u1F6FF\u2600-\u26FF\u2700-\u27BF\u1F900-\u1F9FF\u1FA70-\u1FAFF]+$""
               required:
                 - emoji
       responses:
@@ -853,7 +853,7 @@ components:
           example: "Hi, how are you doing?"
           minLength: 1  
           maxLength: 500  
-          pattern: "^[a-zA-Z0-9 ]+$"
+          pattern: "^[a-zA-Z0-9 !\"#$%&'()*+,\-.\/:;<=>?@[\\\]^_`{|}~]+$"
       required:
         - participants
 
