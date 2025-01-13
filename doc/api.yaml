@@ -1020,6 +1020,7 @@ components:
             properties:
               message:
                 type: string
+                description: "An error response indicating the request was malformed or invalid."
                 example: "The request body is malformed."
                 minLength: 10
                 maxLength: 200
@@ -1035,6 +1036,7 @@ components:
             properties:
               message:
                 type: string
+                description: "An error response indicating that the user needs to authenticate."
                 example: "Authentication is required to access this resource."
                 minLength: 10
                 maxLength: 200
@@ -1050,6 +1052,7 @@ components:
             properties:
               message:
                 type: string
+                description: "An error response indicating an internal server error."
                 example: "The server is currently unavailable, please try again later."
                 minLength: 10
                 maxLength: 200
@@ -1065,6 +1068,7 @@ components:
             properties:
               message:
                 type: string
+                description: "An error response indicating the requested resource could not be found."
                 example: "The requested resource could not be found."
                 minLength: 10
                 maxLength: 200
@@ -1080,6 +1084,7 @@ components:
             properties:
               message:
                 type: string
+                description: "An error response indicating that the operation is not allowed."
                 example: "You do not have permission to perform this operation."
                 minLength: 10
                 maxLength: 200
