@@ -853,7 +853,7 @@ components:
           example: "Hi, how are you doing?"
           minLength: 1  
           maxLength: 500  
-          pattern: "^[a-zA-Z0-9 !#$%&'()*+,\-.:;<=>?@[]^_`{|}~]+$"
+          pattern: "^[a-zA-Z0-9 !#$%&'()*+,-.:;<=>?@[]^_`{|}~]+$"
       required:
         - participants
 
