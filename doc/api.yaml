@@ -168,6 +168,8 @@ paths:
                 type: string
                 description: "Represents file uploads for the profile picture."
                 format: binary
+                minLength: 10
+                maxLength: 100
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -192,6 +194,8 @@ paths:
                   type: string
                   format: binary
                   description: "The picture to upload."
+                  minLength: 10
+                  maxLength: 100
       responses:
         "200":
           description: "Picture uploaded."
@@ -477,6 +481,7 @@ paths:
                   example: "👍"
                   minLength: 1
                   maxLength: 1
+                  pattern: "^(?:[\u0023-\u0039\ufe0f]|[\u200d-\ud83e\udd2f])$"
               required:
                 - emoji
       responses:
@@ -537,6 +542,8 @@ paths:
                   type: string
                   format: binary
                   description: "The picture to upload for the group."
+                  minLength: 10
+                  maxLength: 100
       responses:
         "200":
           description: "Group picture uploaded."
@@ -638,7 +645,7 @@ paths:
                   example: "Group for our band."
                   minLength: 5
                   maxLength: 200
-                  pattern: "^[a-zA-Z0-9 ]+$"
+                  pattern: "^[a-zA-Z0-9 .]+$"
 
                 members:
                   type: array
@@ -695,7 +702,7 @@ paths:
                     example: "Group name already in use."
                     minLength: 10
                     maxLength: 100
-                    pattern: "^[a-zA-Z0-9 ]+$"
+                    pattern: "^[a-zA-Z0-9 .]+$"
         "500": { $ref: "#/components/responses/InternalServerError" }
     
   ##addToGroup
@@ -741,7 +748,7 @@ paths:
                     example: "Member added successfully."
                     minLength: 10
                     maxLength: 100
-                    pattern: "^[a-zA-Z0-9 ]+$"
+                    pattern: "^[a-zA-Z0-9 .]+$"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
@@ -788,7 +795,7 @@ paths:
                     example: "User is already in the group."
                     minLength: 10
                     maxLength: 100
-                    pattern: "^[a-zA-Z0-9 ]+$"
+                    pattern: "^[a-zA-Z0-9. ]+$"
         "500": { $ref: "#/components/responses/InternalServerError" }
 
 components:
@@ -836,7 +843,7 @@ components:
             description: "Username of a participant in the conversation."
             minLength: 3
             maxLength: 30
-            pattern: "^[a-zA-Z0-9_]+$"  
+            pattern: "^[a-zA-Z0-9_ ]+$"
           example: ["Fiore Rossi", "Ale Bianchi"]
           minItems: 2  
           maxItems: 50
@@ -887,7 +894,7 @@ components:
                 example: "This is a preview of the message content."
                 minLength: 1
                 maxLength: 500
-                pattern: "^[a-zA-Z0-9 ]+$"
+                pattern: "^[a-zA-Z0-9 .]+$"
             thumbnail_url:
                 description: "URL of the thumbnail image if the message is an image."
                 type: string
