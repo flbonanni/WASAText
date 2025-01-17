@@ -168,8 +168,8 @@ paths:
                 type: string
                 description: "Represents file uploads for the profile picture."
                 format: binary
-                minLength: 10
-                maxLength: 100
+                ##minLength: 10
+                ##maxLength: 100
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -194,8 +194,8 @@ paths:
                   type: string
                   format: binary
                   description: "The picture to upload."
-                  minLength: 10
-                  maxLength: 100
+                  ##minLength: 10
+                  ##maxLength: 100
       responses:
         "200":
           description: "Picture uploaded."
@@ -481,7 +481,7 @@ paths:
                   example: "🌈"
                   minLength: 1
                   maxLength: 1
-                  pattern: "^[\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]]+$"
+                  ##pattern: "^[\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]]+$"
               required:
                 - emoji
       responses:
@@ -657,7 +657,7 @@ paths:
                   description: "List of usernames to add to the group."
                   example: ["Anna", "Billie", "Karl"]
                   minItems: 1
-                  maxItems: 5
+                  maxItems: 50
               required:
                 - group_name
                 - members
