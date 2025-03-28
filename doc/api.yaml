@@ -71,49 +71,6 @@ paths:
         "400": { $ref: "#/components/responses/BadRequest" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  ##doLogout
-  /session/logout:
-    post:
-      tags: ["Login"]
-      summary: Logs out the user
-      description: |-
-        Ends the user's session and invalidates the token if applicable.
-      operationId: doLogout
-      requestBody:
-        description: User details
-        content:
-          application/json:
-            schema:
-              type: object
-              description: "Represents an identifier, typically used to uniquely reference an entity or object in the system."
-              properties:
-                identifier:
-                  type: string
-                  description: "A unique identifier for the entity or object."
-                  example: "abcdef012345"
-                  minLength: 12
-                  maxLength: 12
-                  pattern: "^[a-zA-Z0-9]{12}$"
-        required: true
-      responses:
-        "200":
-          description: User log-out action successful
-          content:
-            application/json:
-              schema:
-                type: object
-                description: "Represents a response confirming the successful logout of a user."
-                properties:
-                  message:
-                    type: string
-                    description: "A message confirming that the user has logged out successfully."
-                    example: "User logged out successfully."
-                    minLength: 10
-                    maxLength: 100
-                    pattern: "^[a-zA-Z0-9 .,!?']+$"
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
-
   ##getUserProfile
   /users/{username}/profile:
     get:
