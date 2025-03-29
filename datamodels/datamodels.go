@@ -1,8 +1,8 @@
 package datamodels
 
-import {
+import (
 	"time"
-}
+)
 
 type User struct {
 	CurrentUsername string `json:"current_username"`
