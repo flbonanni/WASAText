@@ -4,12 +4,11 @@ import (
 	"database/sql"
 	"errors"
 	"strings"
-	"github.com/flbonanni/WASAText/service/api"
 )
 
 var ErrConversationDoesNotExist = errors.New("conversation does not exist")
 
-func (db *appdbimpl) GetConversations(username string) ([]api.Conversation, error) {
+func (db *appdbimpl) GetConversations(username string) ([]Conversation, error) {
 	rows, err := db.c.Query(
 		`SELECT conversation_id, participants, last_message FROM conversations 
 		 WHERE FIND_IN_SET(?, participants) > 0`, username)
@@ -18,9 +17,9 @@ func (db *appdbimpl) GetConversations(username string) ([]api.Conversation, erro
 	}
 	defer rows.Close()
 
-	var conversations []api.Conversation
+	var conversations []Conversation
 	for rows.Next() {
-		var conv api.Conversation
+		var conv Conversation
 		var participantsStr string
 		if err := rows.Scan(&conv.ConversationID, &participantsStr, &conv.LastMessage); err != nil {
 			return nil, err
@@ -35,8 +34,8 @@ func (db *appdbimpl) GetConversations(username string) ([]api.Conversation, erro
 	return conversations, nil
 }
 
-func (db *appdbimpl) GetConversation(conversationId string) (api.Conversation, error) {
-	var conv api.Conversation
+func (db *appdbimpl) GetConversation(conversationId string) (Conversation, error) {
+	var conv Conversation
 	var participantsStr string
 	if err := db.c.QueryRow(
 		`SELECT conversation_id, participants, last_message FROM conversations 
