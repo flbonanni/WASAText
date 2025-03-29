@@ -1,4 +1,4 @@
-module github.com/flbonanni/WASAText/
+module github.com/flbonanni/WASAText
 
 go 1.17
 
