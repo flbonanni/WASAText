@@ -1,3 +1,10 @@
+package database
+
+import (
+	"database/sql"
+)
+
+
 func (c *Conversation) ConvFromDatabase(conv database.Conversation) {
 	c.ConversationID = conv.ConversationID
 	c.Participants = conv.Participants
