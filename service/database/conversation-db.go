@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"strings"
-
-	"github.com/flbonanni/WASAText/service/api"
 )
 
 var ErrConversationDoesNotExist = errors.New("conversation does not exist")
