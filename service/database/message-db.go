@@ -2,9 +2,10 @@ package database
 
 import (
 	"database/sql"
+	"github.com/flbonanni/WASAText/datamodels"
 )
 
-func (db *appdbimpl) SendMessage(conversationId string, m Message) (Message, error) {
+func (db *appdbimpl) SendMessage(conversationId string, m datamodels.Message) (datamodels.Message, error) {
 	// Inserisce il messaggio nel database
 	res, err := db.c.Exec(
 		`INSERT INTO messages (conversation_id, message_content, timestamp, sender_id)
@@ -21,8 +22,8 @@ func (db *appdbimpl) SendMessage(conversationId string, m Message) (Message, err
 	return m, nil
 }
 
-func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId string, recipientUsername string, senderID uint64) (Message, error) {
-	var orig Message
+func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId string, recipientUsername string, senderID uint64) (datamodels.Message, error) {
+	var orig datamodels.Message
 	// Recupera il messaggio originale dalla tabella messages
 	err := db.c.QueryRow(
 		`SELECT id, message_content, timestamp FROM messages WHERE id = ?`,

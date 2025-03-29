@@ -9,7 +9,7 @@ import (
 
 var ErrConversationDoesNotExist = errors.New("conversation does not exist")
 
-func (db *appdbimpl) GetConversations(username string) ([]Conversation, error) {
+func (db *appdbimpl) GetConversations(username string) ([]datamodels.Conversation, error) {
 	rows, err := db.c.Query(
 		`SELECT conversation_id, participants, last_message FROM conversations 
 		 WHERE FIND_IN_SET(?, participants) > 0`, username)
@@ -18,9 +18,9 @@ func (db *appdbimpl) GetConversations(username string) ([]Conversation, error) {
 	}
 	defer rows.Close()
 
-	var conversations []Conversation
+	var conversations []datamodels.Conversation
 	for rows.Next() {
-		var conv Conversation
+		var conv datamodels.Conversation
 		var participantsStr string
 		if err := rows.Scan(&conv.ConversationID, &participantsStr, &conv.LastMessage); err != nil {
 			return nil, err
@@ -35,8 +35,8 @@ func (db *appdbimpl) GetConversations(username string) ([]Conversation, error) {
 	return conversations, nil
 }
 
-func (db *appdbimpl) GetConversation(conversationId string) (Conversation, error) {
-	var conv Conversation
+func (db *appdbimpl) GetConversation(conversationId string) (datamodels.Conversation, error) {
+	var conv datamodels.Conversation
 	var participantsStr string
 	if err := db.c.QueryRow(
 		`SELECT conversation_id, participants, last_message FROM conversations 
