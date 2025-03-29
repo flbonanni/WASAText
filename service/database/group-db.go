@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"database/sql"
-	"ioutil"
 	"strings"
 )
 
@@ -30,8 +29,7 @@ func (db *appdbimpl) UpdateGroupName(groupId string, adminID uint64, groupName s
 
 // UpdateGroupPhoto aggiorna la foto del gruppo se l'utente è admin.
 // Il parametro file è un io.Reader che rappresenta il file caricato.
-func (db *appdbimpl) UpdateGroupPhoto(groupId string, adminID uint64, file io.Reader) error {
-	photoData, err := ioutil.ReadAll(file)
+func (db *appdbimpl) UpdateGroupPhoto(groupId string, adminID uint64, photoData string) error {
 	if err != nil {
 		return err
 	}
