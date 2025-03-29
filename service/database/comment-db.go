@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"time"
 )
 
 func (db *appdbimpl) CommentMessage(conversationId string, messageId string, emoji string, userID uint64) error {
@@ -18,7 +19,7 @@ func (db *appdbimpl) CommentMessage(conversationId string, messageId string, emo
 		return err
 	} else if affected == 0 {
 		// Assumi che ErrCommentNotCreated sia un errore definito altrove
-		return ErrCommentNotCreated
+		return fmt.Errorf("comment not created")
 	}
 	return nil
 }
@@ -36,7 +37,7 @@ func (db *appdbimpl) UncommentMessage(conversationId string, messageId string, u
 		return err
 	} else if affected == 0 {
 		// Assumi che ErrCommentDoesNotExist sia un errore definito altrove
-		return ErrCommentDoesNotExist
+		return fmt.Errorf("comment not found")
 	}
 	return nil
 }

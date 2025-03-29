@@ -5,7 +5,7 @@ import (
 	"github.com/flbonanni/WASAText/datamodels"
 )
 
-func (db *appdbimpl) CreateUser(u User) (datamodels.User, error) {
+func (db *appdbimpl) CreateUser(u datamodels.User) (datamodels.User, error) {
 	res, err := db.c.Exec("INSERT INTO users(username) VALUES (?)", u.Username)
 	if err != nil {
 		var user datamodels.User

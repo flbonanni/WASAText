@@ -58,3 +58,10 @@ type MessageContent struct {
 	Text     string `json:"text,omitempty"`
 	ImageURL string `json:"image_url,omitempty"`
 }
+
+type Photo struct {
+	Id            uint64 `json:"id"`
+	UserId        uint64 `json:"userId"`
+	File          []byte `json:"file"`
+	Date          string `json:"date"`
+}

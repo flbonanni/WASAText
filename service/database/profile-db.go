@@ -17,7 +17,7 @@ func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
 	return picture, nil
 }
 
-func (db *appdbimpl) ChangeUserPhoto(u User, photo datamodels.Photo) error {
+func (db *appdbimpl) ChangeUserPhoto(u datamodels.User, photo datamodels.Photo) error {
 	// Esegue l'update della foto dell'utente identificato da u.Id
 	res, err := db.c.Exec(`UPDATE users SET photo = ? WHERE id = ?`, photo.Data, u.Id)
 	if err != nil {

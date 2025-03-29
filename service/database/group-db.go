@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"database/sql"
+	"ioutil"
+	"strings"
 )
 
 var (
