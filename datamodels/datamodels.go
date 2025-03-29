@@ -5,9 +5,3 @@ type Conversation struct {
 	Participants   []string `json:"participants"`
 	LastMessage    string   `json:"last_message,omitempty"` // omitempty allows the field to be optional
 }
-
-func (c *Conversation) ConvFromDatabase(conv database.Conversation) {
-	c.ConversationID = conv.ConversationID
-	c.Participants = conv.Participants
-	c.LastMessage = conv.LastMessage
-}
