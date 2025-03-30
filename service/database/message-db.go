@@ -57,7 +57,7 @@ func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId strin
 	}
 
 	forwardedMessage := datamodels.Message{
-		ID:            uint64(lastInsertID),
+		ID:             int(lastInsertID),
 		MessageContent: forwardedContent,
 		Timestamp:      now,
 	}
