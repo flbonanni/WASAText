@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
+func (db *appdbimpl) GetUserPicture(username string) (error) {
 	var picture []byte
 	// Esegue la query per ottenere la foto (campo photo) dell'utente
 	if err := db.c.QueryRow(`SELECT photo FROM users WHERE username = ?`, username).Scan(&picture); err != nil {

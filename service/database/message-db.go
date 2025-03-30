@@ -24,7 +24,7 @@ func (db *appdbimpl) SendMessage(conversationId string, m datamodels.Message) (d
 	return m, nil
 }
 
-func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId string, recipientUsername string, senderID uint64) (datamodels.Message, error) {
+func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId string, recipientUsername string, senderID uint64) (error) {
 	var orig datamodels.Message
 	// Recupera il messaggio originale dalla tabella messages
 	err := db.c.QueryRow(

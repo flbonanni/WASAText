@@ -9,9 +9,9 @@ func (db *appdbimpl) CreateUser(u datamodels.User) (datamodels.User, error) {
 	res, err := db.c.Exec("INSERT INTO users(username) VALUES (?)", u.CurrentUsername)
 	if err != nil {
 		var user datamodels.User
-		if err := db.c.QueryRow(`SELECT id, username FROM users WHERE username = ?`, u.CurrentUsernameUsername).Scan(&user.ID, &user.CurrentUsernameUsername); err != nil {
+		if err := db.c.QueryRow(`SELECT id, username FROM users WHERE username = ?`, u.CurrentUsername).Scan(&user.ID, &user.CurrentUsernameUsername); err != nil {
 			if err == sql.ErrNoRows {
-				return user, ErrUserDoesNotExist
+				return user, err
 			}
 		}
 		return user, nil
@@ -20,7 +20,7 @@ func (db *appdbimpl) CreateUser(u datamodels.User) (datamodels.User, error) {
 	if err != nil {
 		return u, err
 	}
-	u.Id = uint64(lastInsertID)
+	u.ID = uint64(lastInsertID)
 	return u, nil
 }
 
@@ -42,7 +42,7 @@ func (db *appdbimpl) GetUserId(username string) (datamodels.User, error) {
 	var user datamodels.User
 	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE username = ?`, username).Scan(&user.ID, &user.CurrentUsername); err != nil {
 		if err == sql.ErrNoRows {
-			return user, ErrUserDoesNotExist
+			return user, err
 		}
 	}
 	return user, nil
@@ -50,9 +50,9 @@ func (db *appdbimpl) GetUserId(username string) (datamodels.User, error) {
 
 func (db *appdbimpl) CheckUserByUsername(u datamodels.User) (datamodels.User, error) {
 	var user datamodels.User
-	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE username = ?`, u.Username).Scan(&user.ID, &user.CurrentUsername); err != nil {
+	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE username = ?`, u.CurrentUsername).Scan(&user.ID, &user.CurrentUsername); err != nil {
 		if err == sql.ErrNoRows {
-			return user, ErrUserDoesNotExist
+			return user, err
 		}
 	}
 	return user, nil
@@ -60,7 +60,7 @@ func (db *appdbimpl) CheckUserByUsername(u datamodels.User) (datamodels.User, er
 
 func (db *appdbimpl) CheckUserById(u datamodels.User) (datamodels.User, error) {
 	var user datamodels.User
-	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE id = ?`, u.Id).Scan(&user.ID, &user.CurrentUsername); err != nil {
+	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE id = ?`, u.ID).Scan(&user.ID, &user.CurrentUsername); err != nil {
 		if err == sql.ErrNoRows {
 			return user, ErrUserDoesNotExist
 		}
