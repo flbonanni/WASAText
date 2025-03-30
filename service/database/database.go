@@ -74,3 +74,12 @@ func New(db *sql.DB) (AppDatabase, error) {
 func (db *appdbimpl) Ping() error {
 	return db.c.Ping()
 }
+
+type AppDatabase interface {
+	CheckUserById(User) (User, error)
+	CommentMessage(Comment) (Comment, error)
+	GetConversations(User) (Conversation, error)
+	UncommentMessage(Comment) error
+
+	Ping() error
+}

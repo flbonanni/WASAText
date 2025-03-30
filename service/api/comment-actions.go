@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
+	"github.com/flbonanni/WASAText/service/database"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -74,7 +75,7 @@ func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps h
 
 	// Rimuove l'emoji reaction dal messaggio nel database
 	// (La funzione rt.db.UncommentMessage è ipotetica e deve gestire i controlli di permessi e l'eliminazione)
-	err = rt.db.UncommentMessage(conversationId, messageId, user.ID)
+	err = rt.db.UncommentMessage(messageId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

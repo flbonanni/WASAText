@@ -1,8 +1,8 @@
 package api
 
-/* import (
+import (
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
-) */
+) 
 import "time"
 
 type User struct {
