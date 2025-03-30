@@ -24,18 +24,20 @@ func (db *appdbimpl) SendMessage(conversationId string, m datamodels.Message) (d
 	return m, nil
 }
 
-func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId string, recipientUsername string, senderID uint64) (error) {
+func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId string, recipientUsername string, senderID uint64) (datamodels.Message, error) {
 	var orig datamodels.Message
+
 	// Recupera il messaggio originale dalla tabella messages
 	err := db.c.QueryRow(
 		`SELECT id, message_content, timestamp FROM messages WHERE id = ?`,
 		messageId).Scan(&orig.ID, &orig.MessageContent, &orig.Timestamp)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return fmt.Errorf("message not found")
+			return datamodels.Message{}, fmt.Errorf("message not found")
 		}
-		return err
+		return datamodels.Message{}, err
 	}
+
 	// Se si desidera modificare il contenuto in forward (ad esempio, aggiungere un prefisso) si può fare qui.
 	forwardedContent := orig.MessageContent
 
@@ -46,15 +48,21 @@ func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId strin
          VALUES (?, ?, ?, ?)`,
 		targetConversationId, forwardedContent, now, senderID)
 	if err != nil {
-		return err
+		return datamodels.Message{}, err
 	}
+
 	lastInsertID, err := res.LastInsertId()
 	if err != nil {
-		return err
+		return datamodels.Message{}, err
 	}
-	orig.ID = int(lastInsertID)
-	orig.Timestamp = now
-	return orig
+
+	forwardedMessage := datamodels.Message{
+		ID:            uint64(lastInsertID),
+		MessageContent: forwardedContent,
+		Timestamp:      now,
+	}
+
+	return forwardedMessage, nil
 }
 
 func (db *appdbimpl) DeleteMessage(conversationId string, messageId string, senderID uint64) error {

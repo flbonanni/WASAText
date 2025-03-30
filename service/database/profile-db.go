@@ -6,16 +6,16 @@ import (
 	"fmt"
 )
 
-func (db *appdbimpl) GetUserPicture(username string) (error) {
+func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
 	var picture []byte
 	// Esegue la query per ottenere la foto (campo photo) dell'utente
 	if err := db.c.QueryRow(`SELECT photo FROM users WHERE username = ?`, username).Scan(&picture); err != nil {
 		if err == sql.ErrNoRows {
-			return fmt.Errorf("user does not exist")
+			return nil, fmt.Errorf("user does not exist")
 		}
-		return err
+		return nil, err
 	}
-	return picture
+	return picture, nil
 }
 
 func (db *appdbimpl) ChangeUserPhoto(u datamodels.User, photo datamodels.Photo) error {

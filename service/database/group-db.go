@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"io"
 	"database/sql"
 	"strings"
 )

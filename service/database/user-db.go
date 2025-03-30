@@ -26,11 +26,11 @@ func (db *appdbimpl) CreateUser(u datamodels.User) (datamodels.User, error) {
 	// Recupera l'ID dell'utente appena inserito
 	lastInsertID, err := res.LastInsertId()
 	if err != nil {
-		return datamodels.User{}, err
+    return datamodels.User{}, err
 	}
 
-	// CONVERSIONE DA int64 A uint64
-	u.ID = uint64(lastInsertID)
+	// CONVERSIONE DA int64 A int
+	u.ID = int(lastInsertID) 
 	return u, nil
 }
 
