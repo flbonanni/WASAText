@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"time"
+	"fmt"
 )
 
 func (db *appdbimpl) CommentMessage(conversationId string, messageId string, emoji string, userID uint64) error {

@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"github.com/flbonanni/WASAText/datamodels"
+	"time"
 )
 
 func (db *appdbimpl) SendMessage(conversationId string, m datamodels.Message) (datamodels.Message, error) {
@@ -10,7 +11,7 @@ func (db *appdbimpl) SendMessage(conversationId string, m datamodels.Message) (d
 	res, err := db.c.Exec(
 		`INSERT INTO messages (conversation_id, message_content, timestamp, sender_id)
          VALUES (?, ?, ?, ?)`,
-		conversationId, m.MessageContent, m.Timestamp, m.Preview.SenderID)
+		conversationId, m.MessageContent, m.Timestamp)
 	if err != nil {
 		return m, err
 	}
@@ -30,7 +31,7 @@ func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId strin
 		messageId).Scan(&orig.ID, &orig.MessageContent, &orig.Timestamp)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return orig, ErrMessageDoesNotExist // ipotetico errore definito altrove
+			return fmt.Errorf("message not found")
 		}
 		return orig, err
 	}
@@ -68,7 +69,7 @@ func (db *appdbimpl) DeleteMessage(conversationId string, messageId string, send
 		return err
 	}
 	if affected == 0 {
-		return ErrMessageDoesNotExist // oppure un errore di autorizzazione, a seconda della logica
+		return fmt.Errorf("message not found") // oppure un errore di autorizzazione, a seconda della logica
 	}
 	return nil
 }
