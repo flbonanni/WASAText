@@ -13,9 +13,9 @@ func (db *appdbimpl) GetUserPicture(username string) (error) {
 		if err == sql.ErrNoRows {
 			return fmt.Errorf("user does not exist")
 		}
-		return nil, err
+		return err
 	}
-	return picture, nil
+	return picture
 }
 
 func (db *appdbimpl) ChangeUserPhoto(u datamodels.User, photo datamodels.Photo) error {

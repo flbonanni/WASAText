@@ -34,7 +34,7 @@ func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId strin
 		if err == sql.ErrNoRows {
 			return fmt.Errorf("message not found")
 		}
-		return orig, err
+		return err
 	}
 	// Se si desidera modificare il contenuto in forward (ad esempio, aggiungere un prefisso) si può fare qui.
 	forwardedContent := orig.MessageContent
@@ -46,15 +46,15 @@ func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId strin
          VALUES (?, ?, ?, ?)`,
 		targetConversationId, forwardedContent, now, senderID)
 	if err != nil {
-		return orig, err
+		return err
 	}
 	lastInsertID, err := res.LastInsertId()
 	if err != nil {
-		return orig, err
+		return err
 	}
 	orig.ID = int(lastInsertID)
 	orig.Timestamp = now
-	return orig, nil
+	return orig
 }
 
 func (db *appdbimpl) DeleteMessage(conversationId string, messageId string, senderID uint64) error {
