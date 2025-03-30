@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"github.com/flbonanni/WASAText/datamodels"
+	"fmt"
 )
 
 func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
@@ -19,7 +20,7 @@ func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
 
 func (db *appdbimpl) ChangeUserPhoto(u datamodels.User, photo datamodels.Photo) error {
 	// Esegue l'update della foto dell'utente identificato da u.Id
-	res, err := db.c.Exec(`UPDATE users SET photo = ? WHERE id = ?`, photo.file, u.Id)
+	res, err := db.c.Exec(`UPDATE users SET photo = ? WHERE id = ?`, photo.File, u.ID)
 	if err != nil {
 		return err
 	}
