@@ -34,12 +34,17 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/flbonanni/WASAText/datamodels"
 )
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
 	GetName() (string, error)
 	SetName(name string) error
+	CheckUserById(string) (datamodels.User, error)
+	CommentMessage(datamodels.Comment) (datamodels.Comment, error)
+	GetConversations(datamodels.User) (datamodels.Conversation, error)
+	UncommentMessage(datamodels.Comment) error
 
 	Ping() error
 }
@@ -73,13 +78,4 @@ func New(db *sql.DB) (AppDatabase, error) {
 
 func (db *appdbimpl) Ping() error {
 	return db.c.Ping()
-}
-
-type AppDatabase interface {
-	CheckUserById(User) (User, error)
-	CommentMessage(Comment) (Comment, error)
-	GetConversations(User) (Conversation, error)
-	UncommentMessage(Comment) error
-
-	Ping() error
 }
