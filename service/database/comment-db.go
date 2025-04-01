@@ -2,7 +2,6 @@ package database
 
 import (
 	"time"
-	"fmt"
 )
 
 func (db *appdbimpl) CommentMessage(conversationId string, messageId string, emoji string, userID uint64) error {
@@ -18,7 +17,7 @@ func (db *appdbimpl) CommentMessage(conversationId string, messageId string, emo
 	if err != nil {
 		return err
 	} else if affected == 0 {
-		return ErrCommentNotCreated
+		return ErrCommentDoesNotExist
 	}
 	return nil
 }

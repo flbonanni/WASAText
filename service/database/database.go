@@ -43,6 +43,7 @@ var ErrBanDoesNotExist = errors.New("Ban does not exist")
 var ErrFollowDoesNotExist = errors.New("Follow does not exist")
 var ErrCommentDoesNotExist = errors.New("Comment does not exist")
 var ErrLikeDoesNotExist = errors.New("Like does not exist")
+var ErrMessageDoesNotExist = errors.New("Message does not exist")
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
