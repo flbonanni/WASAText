@@ -52,7 +52,7 @@ type AppDatabase interface {
 	CheckUserById(datamodels.User) (datamodels.User, error)
 	CommentMessage(string, string, string, uint64) error
 	GetConversations(string) ([]datamodels.Conversation, error)
-	UncommentMessage(datamodels.Comment) error
+	UncommentMessage(string, string, uint64) error
 
 	Ping() error
 }
