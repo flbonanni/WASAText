@@ -49,7 +49,7 @@ var ErrMessageDoesNotExist = errors.New("Message does not exist")
 type AppDatabase interface {
 	GetName() (string, error)
 	SetName(name string) error
-	CheckUserById(string) (datamodels.User, error)
+	CheckUserById(datamodels.User) (datamodels.User, error)
 	CommentMessage(datamodels.Comment) (datamodels.Comment, error)
 	GetConversations(datamodels.User) (datamodels.Conversation, error)
 	UncommentMessage(datamodels.Comment) error
