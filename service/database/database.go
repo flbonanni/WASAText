@@ -50,7 +50,7 @@ type AppDatabase interface {
 	GetName() (string, error)
 	SetName(string) error
 	CheckUserById(datamodels.User) (datamodels.User, error)
-	CommentMessage(string, string, string, uint64) (datamodels.Comment, error)
+	CommentMessage(string, string, string, uint64) error
 	GetConversations(datamodels.User) (datamodels.Conversation, error)
 	UncommentMessage(datamodels.Comment) error
 
