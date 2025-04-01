@@ -11,7 +11,7 @@ func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
 	// Esegue la query per ottenere la foto (campo photo) dell'utente
 	if err := db.c.QueryRow(`SELECT photo FROM users WHERE username = ?`, username).Scan(&picture); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("user does not exist")
+			return nil, ErrUserDoesNotExist
 		}
 		return nil, err
 	}
@@ -28,7 +28,7 @@ func (db *appdbimpl) ChangeUserPhoto(u datamodels.User, photo datamodels.Photo) 
 	if err != nil {
 		return err
 	} else if affected == 0 {
-		return fmt.Errorf("user does not exist")
+		return ErrUserDoesNotExist
 	}
 	return nil
 }

@@ -33,9 +33,9 @@ func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId strin
 		messageId).Scan(&orig.ID, &orig.MessageContent, &orig.Timestamp)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return datamodels.Message{}, fmt.Errorf("message not found")
+			return orig, ErrMessageDoesNotExist
 		}
-		return datamodels.Message{}, err
+		return orig, err
 	}
 
 	// Se si desidera modificare il contenuto in forward (ad esempio, aggiungere un prefisso) si può fare qui.
@@ -78,7 +78,7 @@ func (db *appdbimpl) DeleteMessage(conversationId string, messageId string, send
 		return err
 	}
 	if affected == 0 {
-		return fmt.Errorf("message not found") // oppure un errore di autorizzazione, a seconda della logica
+		return ErrMessageDoesNotExist
 	}
 	return nil
 }

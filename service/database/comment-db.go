@@ -18,8 +18,7 @@ func (db *appdbimpl) CommentMessage(conversationId string, messageId string, emo
 	if err != nil {
 		return err
 	} else if affected == 0 {
-		// Assumi che ErrCommentNotCreated sia un errore definito altrove
-		return fmt.Errorf("comment not created")
+		return ErrCommentNotCreated
 	}
 	return nil
 }
@@ -36,8 +35,7 @@ func (db *appdbimpl) UncommentMessage(conversationId string, messageId string, u
 	if err != nil {
 		return err
 	} else if affected == 0 {
-		// Assumi che ErrCommentDoesNotExist sia un errore definito altrove
-		return fmt.Errorf("comment not found")
+		return ErrCommentDoesNotExist
 	}
 	return nil
 }
