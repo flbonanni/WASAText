@@ -36,7 +36,7 @@ func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprou
 	user.Id = token
 	user.CurrentUsername = ps.ByName("username")
 
-	dbuser, err := rt.db.CheckUserById(user.CurrentUsername)
+	dbuser, err := rt.db.CheckUserById(token)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"github.com/flbonanni/WASAText/datamodels"
 	"time"
-	"fmt"
 )
 
 func (db *appdbimpl) SendMessage(conversationId string, m datamodels.Message) (datamodels.Message, error) {

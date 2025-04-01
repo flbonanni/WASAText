@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"github.com/flbonanni/WASAText/datamodels"
-	"fmt"
 )
 
 func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {

@@ -41,7 +41,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	token := getToken(r.Header.Get("Authorization"))
 	requestUser.Id = token
 	// controlla che esista un tale utente
-	dbrequestuser, err := rt.db.CheckUserById(requestUser.CurrentUsername)
+	dbrequestuser, err := rt.db.CheckUserById(token)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
