@@ -48,9 +48,9 @@ var ErrMessageDoesNotExist = errors.New("Message does not exist")
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
 	GetName() (string, error)
-	SetName(name string) error
+	SetName(string) error
 	CheckUserById(datamodels.User) (datamodels.User, error)
-	CommentMessage(datamodels.Comment) (datamodels.Comment, error)
+	CommentMessage(string, string, string, uint64) (datamodels.Comment, error)
 	GetConversations(datamodels.User) (datamodels.Conversation, error)
 	UncommentMessage(datamodels.Comment) error
 
