@@ -60,19 +60,19 @@ type MessageContent struct {
 	ImageURL string `json:"image_url,omitempty"`
 }
 
-func (u *User) FromDatabase(user database.User) {
+func (u *User) FromDatabase(user User) {
 	u.Id = user.Id
 	u.Username = user.Username
 }
 
-func (u *User) ToDatabase() database.User {
-	return database.User{
+func (u *User) ToDatabase() User {
+	return User{
 		Id:       u.Id,
 		Username: u.Username,
 	}
 }
 
-func (c *Conversation) ConvFromDatabase(conv database.Conversation) {
+func (c *Conversation) ConvFromDatabase(conv Conversation) {
 	c.ConversationID = conv.ConversationID
 	c.Participants = conv.Participants
 	c.LastMessage = conv.LastMessage

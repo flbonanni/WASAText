@@ -15,7 +15,7 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	// Verifica autenticazione
 	var user User
 	token := getToken(r.Header.Get("Authorization"))
-	dbUser, err := rt.db.CheckUserById(token)
+	dbUser, err := rt.db.CheckUserById(user.CurrentUsername)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -42,7 +42,7 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	// Aggiungi l'emoji reaction al messaggio nel database
 	// (La funzione rt.db.CommentMessage è ipotetica e deve gestire l'associazione tra
 	//  conversationId, messageId, emoji e l'ID dell'utente che aggiunge il commento)
-	err = rt.db.CommentMessage(conversationId, messageId, emoji, user.ID)
+	err = rt.db.CommentMessage(conversationId, messageId, emoji, user.CurrentUsername)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -61,7 +61,7 @@ func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps h
 	// Verifica autenticazione
 	var user User
 	token := getToken(r.Header.Get("Authorization"))
-	dbUser, err := rt.db.CheckUserById(token)
+	dbUser, err := rt.db.CheckUserById(user.CurrentUsername)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -75,7 +75,7 @@ func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps h
 
 	// Rimuove l'emoji reaction dal messaggio nel database
 	// (La funzione rt.db.UncommentMessage è ipotetica e deve gestire i controlli di permessi e l'eliminazione)
-	err = rt.db.UncommentMessage(messageId)
+	err = rt.db.UncommentMessage(conversationId, messageId, user.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
