@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"strings"
-	"github.com/flbonanni/WASAText/datamodels"
 )
 
 var ErrConversationDoesNotExist = errors.New("conversation does not exist")
@@ -18,9 +17,9 @@ func (db *appdbimpl) GetConversations(username string) ([]Conversation, error) {
 	}
 	defer rows.Close()
 
-	var conversations []datamodels.Conversation
+	var conversations []Conversation
 	for rows.Next() {
-		var conv datamodels.Conversation
+		var conv Conversation
 		var participantsStr string
 		if err := rows.Scan(&conv.ConversationID, &participantsStr, &conv.LastMessage); err != nil {
 			return nil, err
@@ -35,8 +34,8 @@ func (db *appdbimpl) GetConversations(username string) ([]Conversation, error) {
 	return conversations, nil
 }
 
-func (db *appdbimpl) GetConversation(conversationId string) (datamodels.Conversation, error) {
-	var conv datamodels.Conversation
+func (db *appdbimpl) GetConversation(conversationId string) (Conversation, error) {
+	var conv Conversation
 	var participantsStr string
 	if err := db.c.QueryRow(
 		`SELECT conversation_id, participants, last_message FROM conversations 
