@@ -70,7 +70,7 @@ func (db *appdbimpl) CheckUserByUsername(u datamodels.User) (datamodels.User, er
 
 func (db *appdbimpl) CheckUserById(u User) (User, error) {
 	var user datamodels.User
-	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE id = ?`, u.Id).Scan(&user.Id, &user.Username); err != nil {
+	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE id = ?`, u.ID).Scan(&user.ID, &user.CurrentUsername); err != nil {
 		if err == sql.ErrNoRows {
 			return user, ErrUserDoesNotExist
 		}
