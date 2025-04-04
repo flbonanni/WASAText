@@ -16,7 +16,7 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	var user User
 	token := getToken(r.Header.Get("Authorization"))
 	user.Id = token
-	dbUser, err := rt.db.CheckUserById(user.toDatabase())
+	dbUser, err := rt.db.CheckUserById(user.toDatabase)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
