@@ -34,7 +34,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/flbonanni/WASAText/datamodels"
 	"time"
 )
 

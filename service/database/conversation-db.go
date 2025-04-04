@@ -9,7 +9,7 @@ import (
 
 var ErrConversationDoesNotExist = errors.New("conversation does not exist")
 
-func (db *appdbimpl) GetConversations(username string) ([]datamodels.Conversation, error) {
+func (db *appdbimpl) GetConversations(username string) (Conversation, error) {
 	rows, err := db.c.Query(
 		`SELECT conversation_id, participants, last_message FROM conversations 
 		 WHERE FIND_IN_SET(?, participants) > 0`, username)
