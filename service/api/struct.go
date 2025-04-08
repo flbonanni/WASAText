@@ -7,7 +7,7 @@ import "time"
 
 type User struct {
 	CurrentUsername string `json:"current_username"`
-	ID              int    `json:"id"`
+	ID              uint64 `json:"id"`
 }
 
 type Profile struct {
@@ -60,12 +60,12 @@ type MessageContent struct {
 	ImageURL string `json:"image_url,omitempty"`
 }
 
-func (u *User) FromDatabase(user User) {
+func (u *User) FromDatabase(user database.User) {
 	u.Id = user.Id
 	u.Username = user.Username
 }
 
-func (u *User) ToDatabase() User {
+func (u *User) ToDatabase() database.User {
 	return User{
 		Id:       u.Id,
 		Username: u.Username,

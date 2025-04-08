@@ -15,8 +15,8 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	// Verifica autenticazione
 	var user User
 	token := getToken(r.Header.Get("Authorization"))
-	user.Id = token
-	dbUser, err := rt.db.CheckUserById(user.toDatabase)
+	user.ID = token
+	dbUser, err := rt.db.CheckUserById(user.ToDatabase)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -43,7 +43,7 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	// Aggiungi l'emoji reaction al messaggio nel database
 	// (La funzione rt.db.CommentMessage è ipotetica e deve gestire l'associazione tra
 	//  conversationId, messageId, emoji e l'ID dell'utente che aggiunge il commento)
-	err = rt.db.CommentMessage(conversationId, messageId, emoji, user.CurrentUsername)
+	err = rt.db.CommentMessage(conversationId, messageId, emoji, user.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -61,8 +61,8 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	// Verifica autenticazione
 	var user User
-	token := getToken(r.Header.Get("Authorization"))
-	dbUser, err := rt.db.CheckUserById(user.CurrentUsername)
+	// token := getToken(r.Header.Get("Authorization"))
+	dbUser, err := rt.db.CheckUserById(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

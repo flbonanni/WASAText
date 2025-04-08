@@ -15,7 +15,7 @@ func (rt *_router) getMyConversations(w http.ResponseWriter, r *http.Request, ps
 	var user User
 	// estrarre un token dall'header
 	token := getToken(r.Header.Get("Authorization"))
-	dbUser, err := rt.db.CheckUserById(token)
+	dbUser, err := rt.db.CheckUserById(user)
 	if err != nil {
     	http.Error(w, err.Error(), http.StatusInternalServerError)
     	return
