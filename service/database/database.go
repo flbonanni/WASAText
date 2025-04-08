@@ -39,7 +39,7 @@ import (
 
 type User struct {
 	CurrentUsername string `json:"current_username"`
-	ID              int    `json:"id"`
+	ID              uint64 `json:"id"`
 }
 
 type Profile struct {

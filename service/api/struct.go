@@ -16,6 +16,13 @@ type Profile struct {
 	RequestID		int    `json:"request_id"`
 }
 
+type Conversation struct {
+	ConversationID string   `json:"conversation_id"`
+	Participants   []string `json:"participants"`
+	LastMessage    string   `json:"last_message,omitempty"` // omitempty allows the field to be optional
+}
+
+
 // Message represents a single message in a conversation.
 type Message struct {
 	ID             int            `json:"id"`
