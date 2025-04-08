@@ -13,9 +13,9 @@ import (
 
 func (rt *_router) getMyConversations(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
-	// estrarre un token dall'header
 	token := getToken(r.Header.Get("Authorization"))
-	dbUser, err := rt.db.CheckUserById(user)
+	user.ID = token
+	dbUser, err := rt.db.CheckUserById(user.ToDatabase())
 	if err != nil {
     	http.Error(w, err.Error(), http.StatusInternalServerError)
     	return
@@ -41,8 +41,8 @@ func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps ht
 	var user User
 	var conversation Conversation
 	// estrarre un token dall'header
-	token := getToken(r.Header.Get("Authorization"))
-	dbUser, err := rt.db.CheckUserById(token)
+	//token := getToken(r.Header.Get("Authorization"))
+	dbUser, err := rt.db.CheckUserById(user.ToDatabase())
 	if err != nil {
     	http.Error(w, err.Error(), http.StatusInternalServerError)
     	return
@@ -53,7 +53,7 @@ func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps ht
 	conversationId := ps.ByName("conversation_id")
 
 	// Get the user's conversation from the database
-	conversation, err := rt.db.GetConversation(ConversationId)
+	conversation, err = rt.db.GetConversation(conversationId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

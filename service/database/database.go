@@ -115,6 +115,7 @@ type AppDatabase interface {
 	CommentMessage(string, string, string, uint64) error
 	GetConversations(string) ([]Conversation, error)
 	UncommentMessage(string, string, uint64) error
+	GetConversation(string) (Conversation, error)
 
 	Ping() error
 }

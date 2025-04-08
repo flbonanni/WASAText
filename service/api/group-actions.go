@@ -12,7 +12,9 @@ import (
 
 func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
     token := getToken(r.Header.Get("Authorization"))
-    user, err := rt.db.CheckUserById(token)
+    var requestUser User
+    requestUser.Id = token
+    user, err := rt.db.CheckUserById(requestUser.ToDatabase())
     if err != nil {
         http.Error(w, err.Error(), http.StatusUnauthorized)
         return
