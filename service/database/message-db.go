@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func (db *appdbimpl) SendMessage(conversationId string, m datamodels.Message) (datamodels.Message, error) {
+func (db *appdbimpl) SendMessage(conversationId string, m Message) (Message, error) {
 	// Inserisce il messaggio nel database
 	res, err := db.c.Exec(
 		`INSERT INTO messages (conversation_id, message_content, timestamp, sender_id)
@@ -22,8 +22,8 @@ func (db *appdbimpl) SendMessage(conversationId string, m datamodels.Message) (d
 	return m, nil
 }
 
-func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId string, recipientUsername string, senderID uint64) (datamodels.Message, error) {
-	var orig datamodels.Message
+func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId string, recipientUsername string, senderID uint64) (Message, error) {
+	var orig Message
 
 	// Recupera il messaggio originale dalla tabella messages
 	err := db.c.QueryRow(
@@ -46,15 +46,15 @@ func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId strin
          VALUES (?, ?, ?, ?)`,
 		targetConversationId, forwardedContent, now, senderID)
 	if err != nil {
-		return datamodels.Message{}, err
+		return Message{}, err
 	}
 
 	lastInsertID, err := res.LastInsertId()
 	if err != nil {
-		return datamodels.Message{}, err
+		return Message{}, err
 	}
 
-	forwardedMessage := datamodels.Message{
+	forwardedMessage := Message{
 		ID:             int(lastInsertID),
 		MessageContent: forwardedContent,
 		Timestamp:      now,

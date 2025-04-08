@@ -29,7 +29,7 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 	}
 
 	// CONVERSIONE DA int64 A int
-	u.ID = int(lastInsertID) 
+	u.ID = lastInsertID
 	return u, nil
 }
 
