@@ -116,6 +116,10 @@ type AppDatabase interface {
 	GetConversations(string) ([]Conversation, error)
 	UncommentMessage(string, string, uint64) error
 	GetConversation(string) (Conversation, error)
+	GetUserId(string) (User, error)
+	UpdateGroupName(string, uint64, string) error
+	UpdateGroupPhoto(string, uint64, string) error
+	CreateGroup(uint64, string,  string, []string) (string, error)
 
 	Ping() error
 }

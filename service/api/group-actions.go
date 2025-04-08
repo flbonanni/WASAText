@@ -13,7 +13,7 @@ import (
 func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
     token := getToken(r.Header.Get("Authorization"))
     var requestUser User
-    requestUser.Id = token
+    requestUser.ID = token
     user, err := rt.db.CheckUserById(requestUser.ToDatabase())
     if err != nil {
         http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -47,8 +47,12 @@ func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httpr
 }
 
 func (rt *_router) setGroupPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-    token := getToken(r.Header.Get("Authorization"))
-    user, err := rt.db.CheckUserById(token)
+
+	var requestuser User
+	token := getToken(r.Header.Get("Authorization"))
+	requestuser.ID = token
+	user, err := rt.db.CheckUserById(requestuser.ToDatabase())
+
     if err != nil {
         http.Error(w, err.Error(), http.StatusUnauthorized)
         return
@@ -74,8 +78,10 @@ func (rt *_router) setGroupPhoto(w http.ResponseWriter, r *http.Request, ps http
 }
 
 func (rt *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-    token := getToken(r.Header.Get("Authorization"))
-    user, err := rt.db.CheckUserById(token)
+    var requestuser User
+	token := getToken(r.Header.Get("Authorization"))
+	requestuser.ID = token
+	user, err := rt.db.CheckUserById(requestuser.ToDatabase())	
     if err != nil {
         http.Error(w, err.Error(), http.StatusUnauthorized)
         return

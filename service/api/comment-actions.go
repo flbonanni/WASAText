@@ -68,7 +68,7 @@ func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps h
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	user.FromDatabase(dbUser)
+	user.FromDatabase(dbuser)
 
 	// Estrai parametri dalla URL
 	_ = ps.ByName("username")            // eventuale controllo sull'utente loggato

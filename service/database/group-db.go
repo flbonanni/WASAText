@@ -44,7 +44,7 @@ func (db *appdbimpl) UpdateGroupPhoto(groupId string, adminID uint64, photoData 
 
 // CreateGroup crea un nuovo gruppo, impostando l'utente loggato come admin.
 // I membri vengono memorizzati come una stringa con valori separati da virgola.
-func (db *appdbimpl) CreateGroup(adminID uint64, groupName, description string, members []string) (string, error) {
+func (db *appdbimpl) CreateGroup(adminID uint64, groupName string, description string, members []string) (string, error) {
 	// Converti la slice dei membri in una stringa separata da virgole.
 	membersStr := strings.Join(members, ",")
 	res, err := db.c.Exec(`INSERT INTO groups (admin_id, group_name, description, members) VALUES (?, ?, ?, ?)`,
