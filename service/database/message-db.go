@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"github.com/flbonanni/WASAText/datamodels"
 	"time"
 )
 
