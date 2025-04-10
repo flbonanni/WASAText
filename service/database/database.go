@@ -36,6 +36,7 @@ import (
 	"fmt"
 	"time"
 	"mime/multipart"
+	"io"
 )
 
 type User struct {
