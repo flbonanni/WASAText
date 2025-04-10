@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"strings"
 	"mime/multipart"
+	"io"
 )
 
 var (
