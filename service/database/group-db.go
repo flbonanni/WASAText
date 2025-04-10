@@ -29,16 +29,27 @@ func (db *appdbimpl) UpdateGroupName(groupId string, adminID uint64, groupName s
 // UpdateGroupPhoto aggiorna la foto del gruppo se l'utente è admin.
 // Il parametro file è un io.Reader che rappresenta il file caricato.
 func (db *appdbimpl) UpdateGroupPhoto(groupId string, adminID uint64, photoData multipart.File) error {
-	res, err := db.c.Exec(`UPDATE groups SET photo = ? WHERE group_id = ? AND admin_id = ?`, photoData, groupId, adminID)
+	defer photoData.Close()
+
+	// Legge il contenuto del file in memoria
+	photoBytes, err := io.ReadAll(photoData)
 	if err != nil {
 		return err
 	}
+
+	// Esegue la query di aggiornamento
+	res, err := db.c.Exec(`UPDATE groups SET photo = ? WHERE group_id = ? AND admin_id = ?`, photoBytes, groupId, adminID)
+	if err != nil {
+		return err
+	}
+
 	affected, err := res.RowsAffected()
 	if err != nil {
 		return err
 	} else if affected == 0 {
 		return ErrGroupNotUpdated
 	}
+
 	return nil
 }
 

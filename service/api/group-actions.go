@@ -47,34 +47,39 @@ func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httpr
 }
 
 func (rt *_router) setGroupPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-
 	var requestuser User
 	token := getToken(r.Header.Get("Authorization"))
 	requestuser.ID = token
-	user, err := rt.db.CheckUserById(requestuser.ToDatabase())
 
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusUnauthorized)
-        return
-    }
-    
-    groupId := ps.ByName("group_id")
-    file, _, err := r.FormFile("photo")
-    if err != nil {
-        http.Error(w, "Invalid file upload", http.StatusBadRequest)
-        return
-    }
-    defer file.Close()
-    
-    err = rt.db.UpdateGroupPhoto(groupId, user.ID, file)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(map[string]string{"message": "Group picture uploaded successfully."})
+	user, err := rt.db.CheckUserById(requestuser.ToDatabase())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	err = r.ParseMultipartForm(10 << 20) 
+	if err != nil {
+		http.Error(w, "Could not parse multipart form", http.StatusBadRequest)
+		return
+	}
+
+	groupId := ps.ByName("group_id")
+	file, _, err := r.FormFile("photo")
+	if err != nil {
+		http.Error(w, "Invalid file upload", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	err = rt.db.UpdateGroupPhoto(groupId, user.ID, file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Group picture uploaded successfully."})
 }
 
 func (rt *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
