@@ -120,6 +120,8 @@ type AppDatabase interface {
 	UpdateGroupName(string, uint64, string) error
 	UpdateGroupPhoto(string, uint64, string) error
 	CreateGroup(uint64, string,  string, []string) (string, error)
+	AddMemberToGroup(string, uint64, string) error
+	RemoveMemberFromGroup(string, string) error
 
 	Ping() error
 }

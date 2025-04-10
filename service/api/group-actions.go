@@ -97,7 +97,7 @@ func (rt *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httpro
         return
     }
     
-    groupId, err := rt.db.CreateGroup(reqBody.GroupName, reqBody.Description, append(reqBody.Members, user.ID))
+    groupId, err := rt.db.CreateGroup(user.ID, reqBody.GroupName, reqBody.Description, append(reqBody.Members, user.ID))
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
@@ -109,8 +109,10 @@ func (rt *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httpro
 }
 
 func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-    token := getToken(r.Header.Get("Authorization"))
-    user, err := rt.db.CheckUserById(token)
+    var user User
+	token := getToken(r.Header.Get("Authorization"))
+	user.ID = token
+	user, err := rt.db.CheckUserById(user.ToDatabase())
     if err != nil {
         http.Error(w, err.Error(), http.StatusUnauthorized)
         return
@@ -140,8 +142,10 @@ func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprou
 }
 
 func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-    token := getToken(r.Header.Get("Authorization"))
-    user, err := rt.db.CheckUserById(token)
+    var user User
+	token := getToken(r.Header.Get("Authorization"))
+	user.ID = token
+	user, err := rt.db.CheckUserById(user.ToDatabase())
     if err != nil {
         http.Error(w, err.Error(), http.StatusUnauthorized)
         return
@@ -149,7 +153,7 @@ func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprou
     
     groupId := ps.ByName("group_id")
     memberUsername := ps.ByName("member_username")
-    if memberUsername != user.ID {
+    if memberUsername != user.CurrentUsername {
         http.Error(w, "Unauthorized action", http.StatusForbidden)
         return
     }

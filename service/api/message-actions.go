@@ -17,7 +17,8 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 	var message Message
 	// estrarre un token dall'header
 	token := getToken(r.Header.Get("Authorization"))
-	dbUser, err := rt.db.CheckUserById(token)
+	user.ID = token
+	dbUser, err := rt.db.CheckUserById(user.ToDatabase())
 	if err != nil {
     	http.Error(w, err.Error(), http.StatusInternalServerError)
     	return
