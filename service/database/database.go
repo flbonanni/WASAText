@@ -35,6 +35,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"mime/multipart"
 )
 
 type User struct {
@@ -118,7 +119,7 @@ type AppDatabase interface {
 	GetConversation(string) (Conversation, error)
 	GetUserId(string) (User, error)
 	UpdateGroupName(string, uint64, string) error
-	UpdateGroupPhoto(string, uint64, string) error
+	UpdateGroupPhoto(string, uint64, multipart.File) error
 	CreateGroup(uint64, string,  string, []string) (string, error)
 	AddMemberToGroup(string, uint64, string) error
 	RemoveMemberFromGroup(string, string) error
