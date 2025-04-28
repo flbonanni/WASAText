@@ -40,7 +40,7 @@ func (rt *_router) getMyConversations(w http.ResponseWriter, r *http.Request, ps
 
 func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
-	var conversation Conversation
+	var conversation database.Conversation
 	// estrarre un token dall'header
 	//token := getToken(r.Header.Get("Authorization"))
 	dbUser, err := rt.db.CheckUserById(user.ToDatabase())

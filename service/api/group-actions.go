@@ -8,6 +8,7 @@ import (
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
+    "strconv"
 )
 
 func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -102,7 +103,12 @@ func (rt *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httpro
         return
     }
     
-    groupId, err := rt.db.CreateGroup(user.ID, reqBody.GroupName, reqBody.Description, append(reqBody.Members, user.ID))
+    groupId, err := rt.db.CreateGroup(
+        user.ID,
+        reqBody.GroupName,
+        reqBody.Description,
+        append(reqBody.Members, strconv.FormatUint(user.ID, 10)),
+    )
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
