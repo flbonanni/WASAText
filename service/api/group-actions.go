@@ -120,7 +120,7 @@ func (rt *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httpro
 }
 
 func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-    var user User
+    var user database.User
 	token := getToken(r.Header.Get("Authorization"))
 	user.ID = token
 	user, err := rt.db.CheckUserById(user.ToDatabase())
@@ -153,7 +153,7 @@ func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprou
 }
 
 func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-    var user User
+    var user database.User
 	token := getToken(r.Header.Get("Authorization"))
 	user.ID = token
 	user, err := rt.db.CheckUserById(user.ToDatabase())
