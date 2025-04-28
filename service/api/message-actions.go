@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
@@ -25,9 +26,9 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 	user.FromDatabase(dbUser)
 
-	conversation = ps.byName(conversation_id)
+	conversation = ps.ByName("conversation_id")
 	// Get the user's conversations from the database
-	conversation, err := rt.db.GetConversation(conversation_id)
+	conversation, err = rt.db.GetConversation("conversation_id")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -64,7 +65,7 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 	// Verifica autenticazione
 	var user User
 	token := getToken(r.Header.Get("Authorization"))
-	dbUser, err := rt.db.CheckUserById(token)
+	dbUser, err := rt.db.CheckUserById(user.ToDatabase())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -73,7 +74,7 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 
 	// Estrai parametri dalla URL
 	_ = ps.ByName("username")              // username del richiedente (per eventuali controlli)
-	conversationId := ps.ByName("conversation_id")
+	// conversationId := ps.ByName("conversation_id")
 	messageId := ps.ByName("message_id")
 
 	// Decodifica il body in una mappa senza definire una nuova struct

@@ -123,6 +123,8 @@ type AppDatabase interface {
 	CreateGroup(uint64, string,  string, []string) (string, error)
 	AddMemberToGroup(string, uint64, string) error
 	RemoveMemberFromGroup(string, string) error
+	SendMessage(string, Message) (Message, error)
+	ForwardMessage(string, string, string, uint64) (Message, error)
 
 	Ping() error
 }
