@@ -11,8 +11,6 @@ import (
 
 
 func (rt *_router) getUserPicture(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	var user User
-	var requestUser User
 	// Extract the username from the URL
 	username := ps.ByName("username")
 
@@ -32,11 +30,12 @@ func (rt *_router) getUserPicture(w http.ResponseWriter, r *http.Request, ps htt
 func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
 	var photo Photo
+	var requestUser User
 	token := getToken(r.Header.Get("Authorization"))
-	user.Id = token
+	requestUser.ID = token
 	user.CurrentUsername = ps.ByName("username")
+    user, err := rt.db.CheckUserById(requestUser.ToDatabase())
 
-	dbuser, err := rt.db.CheckUserById(token)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

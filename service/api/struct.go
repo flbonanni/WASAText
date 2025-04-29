@@ -22,7 +22,6 @@ type Conversation struct {
 	LastMessage    string   `json:"last_message,omitempty"` // omitempty allows the field to be optional
 }
 
-
 // Message represents a single message in a conversation.
 type Message struct {
 	ID             int            `json:"id"`
@@ -59,6 +58,13 @@ type MessageContent struct {
 	Type     string `json:"type"` // "text" or "image"
 	Text     string `json:"text,omitempty"`
 	ImageURL string `json:"image_url,omitempty"`
+}
+
+type Photo struct {
+	Id            uint64 `json:"id"`
+	UserId        uint64 `json:"userId"`
+	File          []byte `json:"file"`
+	Date          string `json:"date"`
 }
 
 func (u *User) FromDatabase(user database.User) {

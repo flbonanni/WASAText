@@ -113,19 +113,25 @@ type AppDatabase interface {
 	GetName() (string, error)
 	SetName(string) error
 	CheckUserById(User) (User, error)
-	CommentMessage(string, string, string, uint64) error
-	GetConversations(string) ([]Conversation, error)
-	UncommentMessage(string, string, uint64) error
-	GetConversation(string) (Conversation, error)
 	GetUserId(string) (User, error)
+
+	GetConversations(string) ([]Conversation, error)
+	GetConversation(string) (Conversation, error)
+
 	UpdateGroupName(string, uint64, string) error
 	UpdateGroupPhoto(string, uint64, multipart.File) error
 	CreateGroup(uint64, string,  string, []string) (string, error)
 	AddMemberToGroup(string, uint64, string) error
 	RemoveMemberFromGroup(string, string) error
+
+	CommentMessage(string, string, string, uint64) error
+	UncommentMessage(string, string, uint64) error
+	DeleteMessage(string, string, uint64) error
 	SendMessage(string, Message) (Message, error)
 	ForwardMessage(string, string, string, uint64) (Message, error)
-	DeleteMessage(string, string, uint64) error
+
+	GetUserPicture(string) ([]byte, error)
+	ChangeUserPhoto(User, Photo) error
 
 	Ping() error
 }
