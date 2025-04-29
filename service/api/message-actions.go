@@ -15,7 +15,7 @@ import (
 
 func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
-	var conversation Conversation
+	var conversation database.Conversation
 	var message database.Message
 	// estrarre un token dall'header
 	token := getToken(r.Header.Get("Authorization"))
@@ -64,9 +64,10 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	// Verifica autenticazione
 	var user User
+	var requestUser User
 	token := getToken(r.Header.Get("Authorization"))
     requestUser.ID = token
-    user, err := rt.db.CheckUserById(requestUser.ToDatabase())
+    dbUser, err := rt.db.CheckUserById(requestUser.ToDatabase())
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -110,13 +111,13 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 
 
 func (rt *_router) deleteMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	// Verifica autenticazione
 	var user User
-	token := getToken(r.Header.Get("Authorization"))
-	dbUser, err := rt.db.CheckUserById(token)
+	// estrarre un token dall'header
+	//token := getToken(r.Header.Get("Authorization"))
+	dbUser, err := rt.db.CheckUserById(user.ToDatabase())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+    	http.Error(w, err.Error(), http.StatusInternalServerError)
+    	return
 	}
 	user.FromDatabase(dbUser)
 
