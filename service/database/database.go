@@ -125,6 +125,7 @@ type AppDatabase interface {
 	RemoveMemberFromGroup(string, string) error
 	SendMessage(string, Message) (Message, error)
 	ForwardMessage(string, string, string, uint64) (Message, error)
+	DeleteMessage(string, string, uint64) error
 
 	Ping() error
 }

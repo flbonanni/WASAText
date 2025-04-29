@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
+	"github.com/flbonanni/WASAText/service/database"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -15,7 +16,7 @@ import (
 func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
 	var conversation Conversation
-	var message Message
+	var message database.Message
 	// estrarre un token dall'header
 	token := getToken(r.Header.Get("Authorization"))
 	user.ID = token
@@ -26,9 +27,8 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 	user.FromDatabase(dbUser)
 
-	conversation = ps.ByName("conversation_id")
 	// Get the user's conversations from the database
-	conversation, err = rt.db.GetConversation("conversation_id")
+	conversation, err = rt.db.GetConversation(conversation.ConversationID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -65,7 +65,9 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 	// Verifica autenticazione
 	var user User
 	token := getToken(r.Header.Get("Authorization"))
-	dbUser, err := rt.db.CheckUserById(user.ToDatabase())
+    requestUser.ID = token
+    user, err := rt.db.CheckUserById(requestUser.ToDatabase())
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
