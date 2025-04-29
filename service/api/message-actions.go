@@ -28,12 +28,12 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 	user.FromDatabase(dbUser)
 
 	// Get the user's conversations from the database
-	conversation, err = rt.db.GetConversation(conversation.ConversationID)
+	conversationID := ps.ByName("conversation_id")
+	conversation, err = rt.db.GetConversation(conversationID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	conversation.ConvFromDatabase(conversation)
 
 	// Decodifica il messaggio inviato nel body della richiesta
 	err = json.NewDecoder(r.Body).Decode(&message)
