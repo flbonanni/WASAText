@@ -28,19 +28,16 @@ func (rt *_router) getUserPicture(w http.ResponseWriter, r *http.Request, ps htt
 }
 
 func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	var user User
-	var photo Photo
-	var requestUser User
+	var user database.User
+	var photo database.Photo
 	token := getToken(r.Header.Get("Authorization"))
-	requestUser.ID = token
-	user.CurrentUsername = ps.ByName("username")
-    user, err := rt.db.CheckUserById(requestUser.ToDatabase())
-
+	user.ID = token
+	dbUser, err := rt.db.CheckUserById(user.ToDatabase())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+    	http.Error(w, err.Error(), http.StatusInternalServerError)
+    	return
 	}
-	user.FromDatabase(dbuser)
+	user.FromDatabase(dbUser)
 
 	err = json.NewDecoder(r.Body).Decode(&photo)
 	if err != nil {
