@@ -61,8 +61,8 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	// Compila il profilo da restituire
 	profile := Profile{
 		RequestID: requestUser.ID,
-		UserID:    targetUser.ID,
-		CurrentUsername:  targetUser.CurrentUsername,
+		ID:    targetUser.ID,
+		Username:  targetUser.CurrentUsername,
 		// Aggiungi altri campi di Profile se necessario
 	}
 

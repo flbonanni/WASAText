@@ -12,8 +12,8 @@ type User struct {
 
 type Profile struct {
 	Username		string `json:"username"`
-	ID				int    `json:"id"`
-	RequestID		int    `json:"request_id"`
+	ID				uint64 `json:"id"`
+	RequestID		uint64 `json:"request_id"`
 }
 
 type Conversation struct {
