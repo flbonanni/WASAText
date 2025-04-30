@@ -133,6 +133,8 @@ type AppDatabase interface {
 	GetUserPicture(string) ([]byte, error)
 	ChangeUserPhoto(User, Photo) error
 
+	CreateUser(User) (User, error)
+
 	Ping() error
 }
 

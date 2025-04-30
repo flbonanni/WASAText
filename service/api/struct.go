@@ -68,14 +68,14 @@ type Photo struct {
 }
 
 func (u *User) FromDatabase(user database.User) {
-	u.Id = user.Id
-	u.Username = user.Username
+	u.ID = user.ID
+	u.CurrentUsername = user.CurrentUsername
 }
 
 func (u *User) ToDatabase() database.User {
-	return User{
-		Id:       u.Id,
-		Username: u.Username,
+	return database.User{
+		ID:       u.ID,
+		CurrentUsername: u.CurrentUsername,
 	}
 }
 
