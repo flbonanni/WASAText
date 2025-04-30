@@ -7,6 +7,7 @@ import (
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
+	"github.com/flbonanni/WASAText/service/database"
 )
 
 
