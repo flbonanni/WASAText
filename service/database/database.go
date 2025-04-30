@@ -134,6 +134,7 @@ type AppDatabase interface {
 	ChangeUserPhoto(User, Photo) error
 
 	CreateUser(User) (User, error)
+	SetUsername(User, string) (User, error)
 
 	Ping() error
 }
