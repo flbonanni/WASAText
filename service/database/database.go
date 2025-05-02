@@ -146,24 +146,72 @@ type appdbimpl struct {
 // New returns a new instance of AppDatabase based on the SQLite connection `db`.
 // `db` is required - an error will be returned if `db` is `nil`.
 func New(db *sql.DB) (AppDatabase, error) {
-	if db == nil {
-		return nil, errors.New("database is required when building a AppDatabase")
-	}
+    if db == nil {
+        return nil, errors.New("database is required when building a AppDatabase")
+    }
 
-	// Check if table exists. If not, the database is empty, and we need to create the structure
-	var tableName string
-	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='example_table';`).Scan(&tableName)
-	if errors.Is(err, sql.ErrNoRows) {
-		sqlStmt := `CREATE TABLE example_table (id INTEGER NOT NULL PRIMARY KEY, name TEXT);`
-		_, err = db.Exec(sqlStmt)
-		if err != nil {
-			return nil, fmt.Errorf("error creating database structure: %w", err)
-		}
-	}
+    // mappa nome tabella → statement di creazione
+    tables := map[string]string{
+        "users": `
+            CREATE TABLE IF NOT EXISTS users (
+                id       INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT    UNIQUE NOT NULL,
+                photo    BLOB
+            );
+        `,
+        "conversations": `
+            CREATE TABLE IF NOT EXISTS conversations (
+                conversation_id TEXT PRIMARY KEY,
+                participants    TEXT NOT NULL,
+                last_message    TEXT
+            );
+        `,
+        "messages": `
+            CREATE TABLE IF NOT EXISTS messages (
+                id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                conversation_id  TEXT    NOT NULL,
+                message_content  TEXT    NOT NULL,
+                timestamp        DATETIME NOT NULL,
+                sender_id        INTEGER NOT NULL,
+                FOREIGN KEY(conversation_id) REFERENCES conversations(conversation_id),
+                FOREIGN KEY(sender_id) REFERENCES users(id)
+            );
+        `,
+        "comments": `
+            CREATE TABLE IF NOT EXISTS comments (
+                id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                conversation_id TEXT    NOT NULL,
+                message_id      INTEGER NOT NULL,
+                emoji           TEXT    NOT NULL,
+                user_id         INTEGER NOT NULL,
+                timestamp       DATETIME NOT NULL,
+                FOREIGN KEY(conversation_id) REFERENCES conversations(conversation_id),
+                FOREIGN KEY(message_id)      REFERENCES messages(id),
+                FOREIGN KEY(user_id)         REFERENCES users(id)
+            );
+        `,
+        "groups": `
+            CREATE TABLE IF NOT EXISTS groups (
+                group_id    TEXT    PRIMARY KEY,
+                admin_id    INTEGER NOT NULL,
+                group_name  TEXT    NOT NULL,
+                description TEXT,
+                members     TEXT    NOT NULL,  -- user1,user2,...
+                photo       BLOB,
+                FOREIGN KEY(admin_id) REFERENCES users(id)
+            );
+        `,
+    }
 
-	return &appdbimpl{
-		c: db,
-	}, nil
+    // esegue tutti i CREATE TABLE IF NOT EXISTS
+    for tbl, stmt := range tables {
+        if _, err := db.Exec(stmt); err != nil {
+            return nil, fmt.Errorf("error creating table %q: %w", tbl, err)
+        }
+    }
+
+    // alla fine, restituisci l’istanza pronta
+    return &appdbimpl{c: db}, nil
 }
 
 func (db *appdbimpl) Ping() error {
