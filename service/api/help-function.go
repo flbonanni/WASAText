@@ -2,6 +2,7 @@ package api
 
 import (
 	"regexp"
+	"fmt"
 	"strconv"
 )
 
@@ -17,12 +18,12 @@ func getToken(message string) uint64 {
     }
 
 	// DEBUG
-	num, err := strconv.ParseUint(stringToken[0], 10, 64)
+	token, err := strconv.ParseUint(stringToken[0], 10, 64)
     if err != nil {
-        fmt.Printf("DEBUG - invalid token %q: %v\n", tokens[0], err)
+        fmt.Printf("DEBUG - invalid token %q: %v\n", stringToken[0], err)
         return 0
     }
 
-	token, _ := strconv.Atoi(stringToken[0])
+	// token, _ := strconv.Atoi(stringToken[0])
 	return uint64(token)
 }
