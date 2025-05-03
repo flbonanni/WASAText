@@ -154,7 +154,7 @@ func New(db *sql.DB) (AppDatabase, error) {
     tables := map[string]string{
         "users": `
             CREATE TABLE IF NOT EXISTS users (
-                id       INTEGER PRIMARY KEY AUTOINCREMENT,
+                id       INTEGER PRIMARY KEY,
                 username TEXT    UNIQUE NOT NULL,
                 photo    BLOB
             );
@@ -168,7 +168,7 @@ func New(db *sql.DB) (AppDatabase, error) {
         `,
         "messages": `
             CREATE TABLE IF NOT EXISTS messages (
-                id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                id               INTEGER PRIMARY KEY,
                 conversation_id  TEXT    NOT NULL,
                 message_content  TEXT    NOT NULL,
                 timestamp        DATETIME NOT NULL,
@@ -179,7 +179,7 @@ func New(db *sql.DB) (AppDatabase, error) {
         `,
         "comments": `
             CREATE TABLE IF NOT EXISTS comments (
-                id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                id              INTEGER PRIMARY KEY,
                 conversation_id TEXT    NOT NULL,
                 message_id      INTEGER NOT NULL,
                 emoji           TEXT    NOT NULL,
