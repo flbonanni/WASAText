@@ -208,7 +208,6 @@ paths:
             schema:
               $ref: "#/components/schemas/User"
             example:                           
-              id: 2
               current_username: booklover
         required: true
       responses:
