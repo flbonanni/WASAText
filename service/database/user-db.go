@@ -38,7 +38,7 @@ func (db *appdbimpl) SetUsername(u User, oldUsername string) (User, error) {
 		`UPDATE users SET Username=? WHERE Id=? AND Username=?`,
 		u.CurrentUsername, 
 		u.ID, 
-		oldUsername
+		oldUsername,
 	)
 	if err != nil {
 		return u, err
