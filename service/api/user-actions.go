@@ -34,7 +34,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	// Estrarre il token dall'header Authorization
 	token := getToken(r.Header.Get("Authorization"))
-	log.Printf("DEBUG: il token è = %d", token)
+	// log.Printf("DEBUG: il token è = %d", token)
 
 	// Popola l'utente richiedente con il token e verifica in DB
 	var requestUser User
