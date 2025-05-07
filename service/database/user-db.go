@@ -33,8 +33,13 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 	return u, nil
 }
 
-/* func (db *appdbimpl) SetUsername(u User, username string) (User, error) {
-	res, err := db.c.Exec(`UPDATE users SET Username=? WHERE Id=? AND Username=?`, username, u.ID, u.CurrentUsername)
+func (db *appdbimpl) SetUsername(u User, oldUsername string) (User, error) {
+	res, err := db.c.Exec(
+		`UPDATE users SET Username=? WHERE Id=? AND Username=?`,
+		u.CurrentUsername, 
+		u.ID, 
+		oldUsername
+	)
 	if err != nil {
 		return u, err
 	}
@@ -45,31 +50,7 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 		return u, err
 	}
 	return u, nil
-} */
-
-func (db *appdbimpl) SetUsername(u User, oldUsername string) (User, error) {
-	// 1) esegui l'UPDATE con i parametri corretti
-	res, err := db.c.Exec(
-	  `UPDATE users SET Username=? WHERE Id=? AND Username=?`,
-	  u.Username,
-	  u.ID,
-	  oldUsername,
-	)
-	if err != nil {
-	  return u, err
-	}
-	if n, _ := res.RowsAffected(); n == 0 {
-	  return u, fmt.Errorf("nessuna riga aggiornata: id=%d username=%q", u.ID, oldUsername)
-	}
-	// 2) recupera il record aggiornato
-	row := db.c.QueryRow(`SELECT Id, Username FROM users WHERE Id = ?`, u.ID)
-	var updated User
-	if err := row.Scan(&updated.ID, &updated.Username); err != nil {
-	  return u, err
-	}
-	return updated, nil
-  }
-  
+}  
 
 func (db *appdbimpl) GetUserId(username string) (User, error) {
 	var user User
