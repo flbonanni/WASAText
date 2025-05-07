@@ -34,7 +34,7 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 }
 
 func (db *appdbimpl) SetUsername(u User, username string) (User, error) {
-	res, err := db.c.Exec(`UPDATE users SET Username=? WHERE Id=? AND Username=?`, u.CurrentUsername, u.ID, username)
+	res, err := db.c.Exec(`UPDATE users SET Username=? WHERE Id=? AND Username=?`, username, u.ID, u.CurrentUsername)
 	if err != nil {
 		return u, err
 	}

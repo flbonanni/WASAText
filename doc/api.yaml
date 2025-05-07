@@ -208,7 +208,7 @@ paths:
             schema:
               $ref: "#/components/schemas/User"
             example:                           
-              current_username: booklover
+              current_username: bookie
         required: true
       responses:
         "200":
@@ -1069,7 +1069,7 @@ components:
         minLength: 6
         maxLength: 30
         pattern: "^[a-zA-Z0-9_]{6,30}$"
-        example: booklover
+        example: bookie
     
     conversation_id:
       name: conversation_id
