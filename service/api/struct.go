@@ -6,7 +6,6 @@ import (
 import "time"
 
 type User struct {
-	Username        string `json:"username"` // new username vs current
 	CurrentUsername string `json:"current_username"`
 	ID              uint64 `json:"id"`
 }

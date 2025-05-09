@@ -36,22 +36,20 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 func (db *appdbimpl) SetUsername(u User, oldUsername string) (User, error) {
 	res, err := db.c.Exec(
 		`UPDATE users SET Username=? WHERE Id=? AND Username=?`,
-		u.Username, 
+		u.CurrentUsername, 
 		u.ID, 
 		oldUsername,
 	)
 	if err != nil {
 		return u, err
 	}
-
-	n, err := res.RowsAffected()
-    if err != nil {
-        return u, err
-    }
-
-    if n == 0 {
-        return u, fmt.Errorf("update fallito: nessun utente con id=%d e username=%q", u.ID, oldUsername)
-    }
+	affected, err := res.RowsAffected()
+	if err != nil {
+		return u, err
+	} else if affected == 0 {
+		return u, err
+	}
+	return u, nil
 }  
 
 func (db *appdbimpl) GetUserId(username string) (User, error) {
