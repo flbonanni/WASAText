@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 )
 
 func (db *appdbimpl) CreateUser(u User) (User, error) {
@@ -53,13 +52,6 @@ func (db *appdbimpl) SetUsername(u User, oldUsername string) (User, error) {
     if n == 0 {
         return u, fmt.Errorf("update fallito: nessun utente con id=%d e username=%q", u.ID, oldUsername)
     }
-
-	row := db.c.QueryRow(`SELECT Id, Username FROM users WHERE Id = ?`, u.ID)
-    var updated User
-    if err := row.Scan(&updated.ID, &updated.Username); err != nil {
-        return u, err
-    }
-    return updated, nil
 }  
 
 func (db *appdbimpl) GetUserId(username string) (User, error) {
