@@ -35,45 +35,32 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 }
 
 func (db *appdbimpl) SetUsername(u User, oldUsername string) (User, error) {
-    // 1) UPDATE: imposta il nuovo username (u.Username)
-    //    solo nella riga con Id=u.ID e Username=oldUsername
-    res, err := db.c.Exec(
-        `UPDATE users
-            SET Username = ?
-          WHERE Id = ?
-            AND Username = ?`,
-        u.Username,   // nuovo username
-        u.ID,         // id utente
-        oldUsername,  // vecchio username dal path
-    )
+	res, err := db.c.Exec(
+		`UPDATE users SET Username=? WHERE Id=? AND Username=?`,
+		u.Username, 
+		u.ID, 
+		oldUsername,
+	)
+	if err != nil {
+		return u, err
+	}
+
+	n, err := res.RowsAffected()
     if err != nil {
-        // restituisco l’oggetto zero-value e l’errore
-        return User{}, err
+        return u, err
     }
 
-    // 2) controllo che almeno una riga sia stata aggiornata
-    n, err := res.RowsAffected()
-    if err != nil {
-        return User{}, err
-    }
     if n == 0 {
-        return User{}, fmt.Errorf(
-            "update fallito: nessun utente con id=%d e username=%q",
-            u.ID, oldUsername,
-        )
+        return u, fmt.Errorf("update fallito: nessun utente con id=%d e username=%q", u.ID, oldUsername)
     }
 
-    // 3) riprendo il record aggiornato per restituirlo
-    row := db.c.QueryRow(
-        `SELECT Id, Username FROM users WHERE Id = ?`,
-        u.ID,
-    )
+	row := db.c.QueryRow(`SELECT Id, Username FROM users WHERE Id = ?`, u.ID)
     var updated User
     if err := row.Scan(&updated.ID, &updated.Username); err != nil {
-        return User{}, err
+        return u, err
     }
     return updated, nil
-}
+}  
 
 func (db *appdbimpl) GetUserId(username string) (User, error) {
 	var user User
