@@ -185,16 +185,7 @@ paths:
   /users/{username}:
     put:
       parameters:
-      - name: username
-        in: path
-        required: true
-        description: "Alias for the User."
-        schema:
-          type: string
-          minLength: 6
-          maxLength: 30
-          pattern: "^[a-zA-Z0-9_]{6,30}$"
-        example: slow_koala 
+      - $ref: "#/components/parameters/username"
       tags: ["User"]
       summary: "Update username."
       description: |-
@@ -207,9 +198,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/User"
-            example:                           
-              id: 2
-              current_username: booklover
         required: true
       responses:
         "200":
@@ -223,7 +211,7 @@ paths:
                   user_handle:
                     type: string
                     description: "The updated username for the user."
-                    example: "new_username"
+                    example: "booklover"
                     minLength: 3
                     maxLength: 30
                     pattern: "^[a-zA-Z0-9_]{3,30}$"
