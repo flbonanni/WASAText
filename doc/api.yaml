@@ -44,7 +44,7 @@ paths:
               type: object
               description: "Represents a user's name, with validation rules for length and format."
               properties:
-                name:
+                current_username:
                   type: string
                   description: "The user's name, which must be between 3 and 16 characters in length and match the specified pattern."
                   example: Maria
@@ -185,7 +185,16 @@ paths:
   /users/{username}:
     put:
       parameters:
-      - $ref: "#/components/parameters/username"
+      - name: username
+        in: path
+        required: true
+        description: "Alias for the User."
+        schema:
+          type: string
+          minLength: 6
+          maxLength: 30
+          pattern: "^[a-zA-Z0-9_]{6,30}$"
+        example: slow_koala 
       tags: ["User"]
       summary: "Update username."
       description: |-
@@ -198,6 +207,8 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/User"
+            example:                           
+              current_username: bookie
         required: true
       responses:
         "200":
@@ -1058,7 +1069,7 @@ components:
         minLength: 6
         maxLength: 30
         pattern: "^[a-zA-Z0-9_]{6,30}$"
-        example: booklover
+        example: bookie
     
     conversation_id:
       name: conversation_id
