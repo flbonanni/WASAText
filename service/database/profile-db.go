@@ -17,10 +17,10 @@ func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
 }
 
 func (db *appdbimpl) ChangeUserPhoto(u User, photo Photo) error {
-    // Salva il BLOB file e il nome file nel campo `photo_filename`
+    // Salva solo il BLOB photo e la data
     _, err := db.c.Exec(
-        `UPDATE users SET photo = ?, photo_filename = ? WHERE id = ?`,
-        photo.File, photo.Filename, u.ID,
+        `UPDATE users SET photo = ?, photo_date = ? WHERE id = ?`,
+        photo.File, photo.Date, u.ID,
     )
     if err != nil {
         return err

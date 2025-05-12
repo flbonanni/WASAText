@@ -53,12 +53,12 @@ func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprou
         return
     }
 
-    // 5. Crea il record Photo
-    photo := database.Photo{
-        UserID:   dbUser.ID,
-        File:     buf.Bytes(),
-        Filename: header.Filename,
-    }
+    // 5. Costruisci l’oggetto Photo (senza campo Filename, e con Date)
+	photo := database.Photo{
+       UserId: dbUser.ID,
+       File:   buf.Bytes(),
+       Date:   time.Now().Format(time.RFC3339),
+   	}
 
     // 6. Salva la foto
     if err := rt.db.ChangeUserPhoto(dbUser, photo); err != nil {
