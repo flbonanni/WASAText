@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"github.com/flbonanni/WASAText/service/database"
 )
 
 func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
@@ -17,7 +16,7 @@ func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
 	return picture, nil
 }
 
-func (db *appdbimpl) ChangeUserPhoto(u database.User, photo database.Photo) error {
+func (db *appdbimpl) ChangeUserPhoto(u User, photo Photo) error {
     // Salva il BLOB file e il nome file nel campo `photo_filename`
     _, err := db.c.Exec(
         `UPDATE users SET photo = ?, photo_filename = ? WHERE id = ?`,
