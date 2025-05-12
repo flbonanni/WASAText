@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"github.com/flbonanni/WASAText/service/database"
 )
 
 func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
