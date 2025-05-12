@@ -28,31 +28,45 @@ func (rt *_router) getUserPicture(w http.ResponseWriter, r *http.Request, ps htt
 }
 
 func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	var user database.User
-	var photo database.Photo
-    var requestUser User
-	token := getToken(r.Header.Get("Authorization"))
-	user.ID = token
-	user, err := rt.db.CheckUserById(requestUser.ToDatabase())
+    // 1. Estrai l’user ID dal token
+    tokenID := getToken(r.Header.Get("Authorization"))
+
+    // 2. Verifica che l’utente esista davvero
+    dbUser, err := rt.db.CheckUserById(database.User{ID: tokenID})
     if err != nil {
-        http.Error(w, err.Error(), http.StatusUnauthorized)
+        http.Error(w, "User does not exist", http.StatusUnauthorized)
         return
     }
 
-	err = json.NewDecoder(r.Body).Decode(&photo)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest) // 400
-		return
-	}
+    // 3. Estrai la foto dal multipart form
+    file, header, err := r.FormFile("photo")
+    if err != nil {
+        http.Error(w, "Invalid photo upload: "+err.Error(), http.StatusBadRequest)
+        return
+    }
+    defer file.Close()
 
-	// change the user photo
-	err = rt.db.ChangeUserPhoto(user, photo)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest) // 400
-		return
-	}
+    // 4. Leggi tutto in un buffer
+    buf := &bytes.Buffer{}
+    if _, err := io.Copy(buf, file); err != nil {
+        http.Error(w, "Failed to read photo: "+err.Error(), http.StatusInternalServerError)
+        return
+    }
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(photo)
+    // 5. Crea il record Photo
+    photo := database.Photo{
+        UserID:   dbUser.ID,
+        File:     buf.Bytes(),
+        Filename: header.Filename,
+    }
+
+    // 6. Salva la foto
+    if err := rt.db.ChangeUserPhoto(dbUser, photo); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated)
+    json.NewEncoder(w).Encode(photo)
 }

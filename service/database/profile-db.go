@@ -16,17 +16,14 @@ func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
 	return picture, nil
 }
 
-func (db *appdbimpl) ChangeUserPhoto(u User, photo Photo) error {
-	// Esegue l'update della foto dell'utente identificato da u.Id
-	res, err := db.c.Exec(`UPDATE users SET photo = ? WHERE id = ?`, photo.File, u.ID)
-	if err != nil {
-		return err
-	}
-	affected, err := res.RowsAffected()
-	if err != nil {
-		return err
-	} else if affected == 0 {
-		return ErrUserDoesNotExist
-	}
-	return nil
+func (db *appdbimpl) ChangeUserPhoto(u database.User, photo database.Photo) error {
+    // Salva il BLOB file e il nome file nel campo `photo_filename`
+    _, err := db.c.Exec(
+        `UPDATE users SET photo = ?, photo_filename = ? WHERE id = ?`,
+        photo.File, photo.Filename, u.ID,
+    )
+    if err != nil {
+        return err
+    }
+    return nil
 }
