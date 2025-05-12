@@ -202,13 +202,20 @@ paths:
         by another user.
       operationId: setMyUserName
       requestBody:
-        description: "Username"
+        description: "Nuovo username da assegnare."
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
-            example:                           
-              current_username: bookie
+              type: object
+              properties:
+                current_username:
+                  type: string
+                  description: "Il nuovo username da impostare."
+                  minLength: 6
+                  maxLength: 30
+                  pattern: "^[a-zA-Z0-9_]{6,30}$"
+              required:
+                - current_username
         required: true
       responses:
         "200":
