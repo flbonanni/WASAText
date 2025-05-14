@@ -17,10 +17,10 @@ func (db *appdbimpl) GetUserPicture(username string) ([]byte, error) {
 }
 
 func (db *appdbimpl) ChangeUserPhoto(u User, photo Photo) error {
-    // Aggiorna le colonne `photo` e `photo_date` nella tabella users
+    // Aggiorna la colonna `photo` nella tabella users
     _, err := db.c.Exec(
-        `UPDATE users SET photo = ?, photo_date = ? WHERE id = ?`,
-        photo.File, photo.Date, u.ID,
+        `UPDATE users SET photo = ?, WHERE id = ?`,
+        photo.File, u.ID,
     )
     return err
 }
