@@ -48,3 +48,20 @@ func (db *appdbimpl) GetConversation(conversationId string) (Conversation, error
 	conv.Participants = strings.Split(participantsStr, ",")
 	return conv, nil
 }
+
+func (db *appdbimpl) CreateConversation(conversationId string, participants []string) (Conversation, error) {
+    participantsStr := strings.Join(participants, ",")
+    _, err := db.c.Exec(
+        `INSERT INTO conversations (conversation_id, participants, last_message)
+         VALUES (?, ?, NULL)`,
+        conversationId, participantsStr,
+    )
+    if err != nil {
+        return Conversation{}, err
+    }
+    return Conversation{
+        ConversationID: conversationId,
+        Participants:   participants,
+        LastMessage:    sql.NullString{Valid: false},
+    }, nil
+}

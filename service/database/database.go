@@ -115,6 +115,7 @@ type AppDatabase interface {
 	CheckUserById(User) (User, error)
 	GetUserId(string) (User, error)
 
+	CreateConversation(conversationId string, participants []string) (Conversation, error)
 	GetConversations(string) ([]Conversation, error)
 	GetConversation(string) (Conversation, error)
 

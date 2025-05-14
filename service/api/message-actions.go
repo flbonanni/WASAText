@@ -27,18 +27,40 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// Get the user's conversations from the database
 	conversationID := ps.ByName("conversation_id")
-	conversation, err = rt.db.GetConversation(conversationID)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+    conversation, err = rt.db.GetConversation(conversationID)
+    if err != nil {
+        if errors.Is(err, database.ErrConversationDoesNotExist) {
+            // Per creare, serve almeno 2 partecipanti
+            if len(payload.Participants) < 2 {
+                http.Error(w,
+                    "conversation does not exist; provide at least two participants to create it",
+                    http.StatusBadRequest)
+                return
+            }
+            conversation, err = rt.db.CreateConversation(conversationID, payload.Participants)
+            if err != nil {
+                http.Error(w, "cannot create conversation: "+err.Error(),
+                    http.StatusInternalServerError)
+                return
+            }
+        } else {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+    }
 
-	// Decodifica il messaggio inviato nel body della richiesta
-	err = json.NewDecoder(r.Body).Decode(&message)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+    // Decodifica il payload: testo e (se creazione) lista di partecipanti
+    var payload struct {
+        Type         string   `json:"type"`
+        Content      string   `json:"content"`
+        Participants []string `json:"participants,omitempty"`
+    }
+    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+    message.MessageContent = payload.Content
+    message.SenderID = user.ID
 
 	// Imposta il timestamp corrente
 	message.Timestamp = time.Now()

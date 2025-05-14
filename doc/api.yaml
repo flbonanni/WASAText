@@ -305,14 +305,17 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   ##sendMessage
-  /users/{username}/conversations/{conversation_id}/messages/:
+  /users/{username}/conversations/{conversation_id}/messages:
     parameters:
       - $ref: "#/components/parameters/username"
       - $ref: "#/components/parameters/conversation_id"
     post:
       tags: ["Message"]
-      summary: "Send a new message."
-      description: "Send a message from the logged-in user to another user"
+      summary: "Send a new message or create a conversation"
+      description: |
+        Send a message from the logged-in user.
+        If the conversation does not exist, you must supply at least two
+        participants in the `participants` array in order to create it first.
       operationId: sendMessage
       requestBody:
         description: "The content of the message to be sent"
@@ -321,7 +324,7 @@ paths:
           application/json:
             schema:
               type: object
-              description: "Represents the structure of a message, including its type and content."
+              description: "Structure of the request, including type, content, and (for new conversations) participants."
               properties:
                 type:
                   type: string
@@ -338,6 +341,15 @@ paths:
                   minLength: 1
                   maxLength: 500
                   pattern: "^[a-zA-Z0-9 .,!?'\n]*$" 
+
+                participants:
+                  type: array
+                  description: "Usernames to include in the conversation—required if the conversation doesn't exist."
+                  items:
+                    type: string
+                  minItems: 2
+                  example: ["metronomy","other_user"]
+                  
               required:
                 - type
                 - content
