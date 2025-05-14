@@ -60,8 +60,8 @@ func (db *appdbimpl) CreateConversation(conversationId string, participants []st
         return Conversation{}, err
     }
     return Conversation{
-        ConversationID: conversationId,
-        Participants:   participants,
-        LastMessage:    sql.NullString{Valid: false},
-    }, nil
+    	ConversationID: conversationId,
+    	Participants:   participants,
+    	LastMessage:    "",
+	}, nil
 }
