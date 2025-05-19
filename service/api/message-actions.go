@@ -13,13 +13,9 @@ import (
 
 
 func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-    var user User
-    var conversation database.Conversation
-    var message database.Message
-
-    // Estrai token e valida utente
+    // 1) Autenticazione
     token := getToken(r.Header.Get("Authorization"))
-    user.ID = token
+    user := User{ID: token}
     dbUser, err := rt.db.CheckUserById(user.ToDatabase())
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -27,7 +23,7 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
     }
     user.FromDatabase(dbUser)
 
-    // === Decodifica del body JSON ===
+    // 2) Decodifica del body JSON
     var payload struct {
         Type         string   `json:"type"`
         Content      string   `json:"content"`
@@ -38,19 +34,18 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
         return
     }
 
-    // Estrai l'ID della conversazione
+    // 3) Recupero o creazione conversazione
     conversationID := ps.ByName("conversation_id")
-    conversation, err = rt.db.GetConversation(conversationID)
+    conv, err := rt.db.GetConversation(conversationID)
     if err != nil {
         if errors.Is(err, database.ErrConversationDoesNotExist) {
-            // Per creare una conversazione servono almeno 2 partecipanti
             if len(payload.Participants) < 2 {
                 http.Error(w,
                     "conversation does not exist; provide at least two participants to create it",
                     http.StatusBadRequest)
                 return
             }
-            conversation, err = rt.db.CreateConversation(conversationID, payload.Participants)
+            conv, err = rt.db.CreateConversation(conversationID, payload.Participants)
             if err != nil {
                 http.Error(w, "cannot create conversation: "+err.Error(),
                     http.StatusInternalServerError)
@@ -62,15 +57,17 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
         }
     }
 
-    // Mappatura del contenuto sul modello database.MessageContent
+    // 4) Costruzione del messaggio
+    var msg database.Message
+    msg.Timestamp = time.Now()
     switch payload.Type {
     case "text":
-        message.MessageContent = database.MessageContent{
+        msg.MessageContent = database.MessageContent{
             Type: payload.Type,
             Text: payload.Content,
         }
     case "image":
-        message.MessageContent = database.MessageContent{
+        msg.MessageContent = database.MessageContent{
             Type:     payload.Type,
             ImageURL: payload.Content,
         }
@@ -79,20 +76,20 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
         return
     }
 
-    // Imposta il timestamp corrente
-    message.Timestamp = time.Now()
-
-    // Salva il messaggio nel database
-    savedMessage, err := rt.db.SendMessage(conversation.ConversationID, message)
+    // 5) Salvataggio nel DB
+    msgSaved, err := rt.db.SendMessage(conv.ConversationID, msg)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
 
-    // Rispondi con il messaggio creato
+    // 6) Risposta JSON
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusCreated)
-    _ = json.New
+    if err := json.NewEncoder(w).Encode(msgSaved); err != nil {
+        // Anche se fallisce la serializzazione, l'header è già stato inviato
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
 }
 
 func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
