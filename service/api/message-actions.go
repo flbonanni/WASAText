@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+	"errors"
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/flbonanni/WASAText/service/database"
@@ -59,7 +60,19 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
     }
-    message.MessageContent = payload.Content
+    message.MessageContent = database.MessageContent{
+		Type: payload.Type,
+	}
+
+	switch payload.Type {
+	case "text":
+		message.MessageContent.Text = payload.Content
+	case "image":
+		message.MessageContent.ImageURL = payload.Content
+	default:
+		http.Error(w, "unsupported message type", http.StatusBadRequest)
+		return
+	}
     message.SenderID = user.ID
 
 	// Imposta il timestamp corrente
