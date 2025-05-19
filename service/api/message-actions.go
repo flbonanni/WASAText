@@ -13,25 +13,37 @@ import (
 
 
 func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	var user User
-	var conversation database.Conversation
-	var message database.Message
-	// estrarre un token dall'header
-	token := getToken(r.Header.Get("Authorization"))
-	user.ID = token
-	dbUser, err := rt.db.CheckUserById(user.ToDatabase())
-	if err != nil {
-    	http.Error(w, err.Error(), http.StatusInternalServerError)
-    	return
-	}
-	user.FromDatabase(dbUser)
+    var user User
+    var conversation database.Conversation
+    var message database.Message
 
-	// Get the user's conversations from the database
-	conversationID := ps.ByName("conversation_id")
+    // Estrai token e valida utente
+    token := getToken(r.Header.Get("Authorization"))
+    user.ID = token
+    dbUser, err := rt.db.CheckUserById(user.ToDatabase())
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    user.FromDatabase(dbUser)
+
+    // === Decodifica del body JSON ===
+    var payload struct {
+        Type         string   `json:"type"`
+        Content      string   `json:"content"`
+        Participants []string `json:"participants,omitempty"`
+    }
+    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    // Estrai l'ID della conversazione
+    conversationID := ps.ByName("conversation_id")
     conversation, err = rt.db.GetConversation(conversationID)
     if err != nil {
         if errors.Is(err, database.ErrConversationDoesNotExist) {
-            // Per creare, serve almeno 2 partecipanti
+            // Per creare una conversazione servono almeno 2 partecipanti
             if len(payload.Participants) < 2 {
                 http.Error(w,
                     "conversation does not exist; provide at least two participants to create it",
@@ -50,17 +62,6 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
         }
     }
 
-    // === Decodifica del body JSON ===
-    var payload struct {
-        Type         string   `json:"type"`
-        Content      string   `json:"content"`
-        Participants []string `json:"participants,omitempty"`
-    }
-    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-    }
- 
     // Mappatura del contenuto sul modello database.MessageContent
     switch payload.Type {
     case "text":
@@ -78,23 +79,20 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
         return
     }
 
-	// Imposta il timestamp corrente
-	message.Timestamp = time.Now()
+    // Imposta il timestamp corrente
+    message.Timestamp = time.Now()
 
-	// Salva il messaggio nel database associandolo alla conversazione
-	savedMessage, err := rt.db.SendMessage(conversation.ConversationID, message)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+    // Salva il messaggio nel database
+    savedMessage, err := rt.db.SendMessage(conversation.ConversationID, message)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
 
-	// Aggiorna il messaggio con i dati restituiti dal DB (ad esempio, un ID generato)
-	message = savedMessage
-
-	// Respond with the conversations
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(message)
+    // Rispondi con il messaggio creato
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated)
+    _ = json.New
 }
 
 func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
