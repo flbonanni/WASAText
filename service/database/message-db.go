@@ -6,20 +6,31 @@ import (
 )
 
 func (db *appdbimpl) SendMessage(conversationId string, m Message) (Message, error) {
-	// Inserisce il messaggio nel database
-	res, err := db.c.Exec(
-		`INSERT INTO messages (conversation_id, message_content, timestamp, sender_id)
-         VALUES (?, ?, ?, ?)`,
-		conversationId, m.MessageContent, m.Timestamp)
-	if err != nil {
-		return m, err
-	}
-	lastInsertID, err := res.LastInsertId()
-	if err != nil {
-		return m, err
-	}
-	m.ID = int(lastInsertID)
-	return m, nil
+    // Serializziamo MessageContent in JSON
+    contentBytes, err := json.Marshal(m.MessageContent)
+    if err != nil {
+        return m, err
+    }
+
+    // Inseriamo il messaggio; qui assumo che la tabella messages abbia le colonne
+    // (conversation_id, message_content, timestamp), senza sender_id
+    res, err := db.c.Exec(
+        `INSERT INTO messages (conversation_id, message_content, timestamp)
+         VALUES (?, ?, ?)`,
+        conversationId,
+        string(contentBytes),
+        m.Timestamp,
+    )
+    if err != nil {
+        return m, err
+    }
+
+    lastInsertID, err := res.LastInsertId()
+    if err != nil {
+        return m, err
+    }
+    m.ID = int(lastInsertID)
+    return m, nil
 }
 
 func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId string, recipientUsername string, senderID uint64) (Message, error) {
