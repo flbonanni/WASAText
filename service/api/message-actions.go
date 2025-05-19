@@ -50,7 +50,7 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
         }
     }
 
-    // Decodifica il payload: testo e (se creazione) lista di partecipanti
+    // === Decodifica del body JSON ===
     var payload struct {
         Type         string   `json:"type"`
         Content      string   `json:"content"`
@@ -60,20 +60,23 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
     }
-    message.MessageContent = database.MessageContent{
-		Type: payload.Type,
-	}
-
-	switch payload.Type {
-	case "text":
-		message.MessageContent.Text = payload.Content
-	case "image":
-		message.MessageContent.ImageURL = payload.Content
-	default:
-		http.Error(w, "unsupported message type", http.StatusBadRequest)
-		return
-	}
-    message.SenderID = user.ID
+ 
+    // Mappatura del contenuto sul modello database.MessageContent
+    switch payload.Type {
+    case "text":
+        message.MessageContent = database.MessageContent{
+            Type: payload.Type,
+            Text: payload.Content,
+        }
+    case "image":
+        message.MessageContent = database.MessageContent{
+            Type:     payload.Type,
+            ImageURL: payload.Content,
+        }
+    default:
+        http.Error(w, "unsupported message type", http.StatusBadRequest)
+        return
+    }
 
 	// Imposta il timestamp corrente
 	message.Timestamp = time.Now()
