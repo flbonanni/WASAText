@@ -35,18 +35,27 @@ func (db *appdbimpl) GetConversations(username string) ([]Conversation, error) {
 }
 
 func (db *appdbimpl) GetConversation(conversationId string) (Conversation, error) {
-	var conv Conversation
-	var participantsStr string
-	if err := db.c.QueryRow(
-		`SELECT conversation_id, participants, last_message FROM conversations 
-		 WHERE conversation_id = ?`, conversationId).Scan(&conv.ConversationID, &participantsStr, &conv.LastMessage); err != nil {
-		if err == sql.ErrNoRows {
-			return conv, ErrConversationDoesNotExist
-		}
-		return conv, err
-	}
-	conv.Participants = strings.Split(participantsStr, ",")
-	return conv, nil
+    var conv Conversation
+    var participantsStr string
+
+    // COALESCE sostituisce NULL con stringa vuota
+    err := db.c.QueryRow(
+        `SELECT conversation_id,
+                participants,
+                COALESCE(last_message, '') AS last_message
+           FROM conversations
+          WHERE conversation_id = ?`,
+        conversationId,
+    ).Scan(&conv.ConversationID, &participantsStr, &conv.LastMessage)
+    if err != nil {
+        if err == sql.ErrNoRows {
+            return conv, ErrConversationDoesNotExist
+        }
+        return conv, err
+    }
+
+    conv.Participants = strings.Split(participantsStr, ",")
+    return conv, nil
 }
 
 func (db *appdbimpl) CreateConversation(conversationId string, participants []string) (Conversation, error) {
