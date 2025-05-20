@@ -63,6 +63,7 @@ type Message struct {
 	Comments       []Comment      `json:"comments"`
 	MessageStatus  MessageStatus  `json:"message_status"`
 	MessageContent MessageContent `json:"message_content"`
+	SenderID       string         `json:"sender_id"`
 }
 
 // MessagePreview represents the preview of a message.

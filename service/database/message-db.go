@@ -16,15 +16,13 @@ func (db *appdbimpl) SendMessage(conversationId string, m Message) (Message, err
     // Inseriamo il messaggio; qui assumo che la tabella messages abbia le colonne
     // (conversation_id, message_content, timestamp), senza sender_id
     res, err := db.c.Exec(
-        `INSERT INTO messages (conversation_id, message_content, timestamp)
-         VALUES (?, ?, ?)`,
+        `INSERT INTO messages (conversation_id, message_content, timestamp, sender_id)
+        VALUES (?, ?, ?, ?)`,
         conversationId,
         string(contentBytes),
         m.Timestamp,
-    )
-    if err != nil {
-        return m, err
-    }
+        m.SenderID,
+     )
 
     lastInsertID, err := res.LastInsertId()
     if err != nil {

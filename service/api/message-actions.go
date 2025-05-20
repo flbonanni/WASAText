@@ -59,7 +59,8 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 
     // 4) Costruzione del messaggio
     var msg database.Message
-    msg.Timestamp = time.Now()
+	msg.Timestamp = time.Now()
+	msg.SenderID = user.ID
     switch payload.Type {
     case "text":
         msg.MessageContent = database.MessageContent{
