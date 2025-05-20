@@ -1,10 +1,11 @@
 package api
 
 import (
-	"encoding/json"
-	"net/http"
-	"time"
-	"errors"
+    "encoding/json"
+    "errors"
+    "net/http"
+    "strconv"
+    "time"
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/flbonanni/WASAText/service/database"
@@ -59,8 +60,10 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
 
     // 4) Costruzione del messaggio
     var msg database.Message
-	msg.Timestamp = time.Now()
-	msg.SenderID = user.ID
+    msg.Timestamp = time.Now()
+    // Converto user.ID (uint64) a string per SenderID
+    msg.SenderID = strconv.FormatUint(user.ID, 10)
+
     switch payload.Type {
     case "text":
         msg.MessageContent = database.MessageContent{
@@ -88,7 +91,6 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusCreated)
     if err := json.NewEncoder(w).Encode(msgSaved); err != nil {
-        // Anche se fallisce la serializzazione, l'header è già stato inviato
         http.Error(w, err.Error(), http.StatusInternalServerError)
     }
 }
