@@ -40,7 +40,7 @@ func (db *appdbimpl) UpdateGroupPhoto(groupId string, adminID uint64, photoData 
 	}
 
 	// Esegue la query di aggiornamento
-	res, err := db.c.Exec(`UPDATE groups SET photo = ? WHERE group_id = ? AND admin_id = ?`, photoBytes, groupId, adminID)
+	res, err := db.c.Exec(`UPDATE groups SET photo = ? WHERE group_id = ?`, photoBytes, groupId, adminID)
 	if err != nil {
 		return err
 	}
