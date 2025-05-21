@@ -156,7 +156,7 @@ func (rt *_router) deleteMessage(w http.ResponseWriter, r *http.Request, ps http
     user.FromDatabase(dbUser)
 
     // 2) Parametri URL
-    username := ps.ByName("username")
+    // username := ps.ByName("username")
     // (opzionale) potresti voler controllare che username == user.Username
 
     conversationID := ps.ByName("conversation_id")
