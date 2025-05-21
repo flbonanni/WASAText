@@ -37,7 +37,7 @@ func (db *appdbimpl) ForwardMessage(
     targetConversationId string,
     recipientUsername string,
     senderID string, // ora stringa, coerente con SenderID nel modello
-) (database.Message, error) {
+) (Message, error) {
     var orig Message
 
     // 1) Recupero del messaggio originale in una stringa
@@ -89,7 +89,7 @@ func (db *appdbimpl) ForwardMessage(
     }
 
     // 6) Costruzione del messaggio inoltrato da restituire
-    forwardedMsg := database.Message{
+    forwardedMsg := Message{
         ID:             int(newID),
         Timestamp:      now,
         SenderID:       senderID,
