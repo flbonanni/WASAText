@@ -4,6 +4,7 @@ import (
 	"database/sql"
     "encoding/json"
 	"time"
+	"github.com/flbonanni/WASAText/service/database"
 )
 
 func (db *appdbimpl) SendMessage(conversationId string, m Message) (Message, error) {
