@@ -32,45 +32,72 @@ func (db *appdbimpl) SendMessage(conversationId string, m Message) (Message, err
     return m, nil
 }
 
-func (db *appdbimpl) ForwardMessage(messageId string, targetConversationId string, recipientUsername string, senderID uint64) (Message, error) {
-	var orig Message
+func (db *appdbimpl) ForwardMessage(
+    messageId string,
+    targetConversationId string,
+    recipientUsername string,
+    senderID string, // ora stringa, coerente con SenderID nel modello
+) (database.Message, error) {
+    var orig database.Message
 
-	// Recupera il messaggio originale dalla tabella messages
-	err := db.c.QueryRow(
-		`SELECT id, message_content, timestamp FROM messages WHERE id = ?`,
-		messageId).Scan(&orig.ID, &orig.MessageContent, &orig.Timestamp)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return orig, ErrMessageDoesNotExist
-		}
-		return orig, err
-	}
+    // 1) Recupero del messaggio originale in una stringa
+    var contentStr string
+    err := db.c.QueryRow(
+        `SELECT id, message_content, timestamp, sender_id 
+           FROM messages 
+          WHERE id = ?`,
+        messageId,
+    ).Scan(&orig.ID, &contentStr, &orig.Timestamp, &orig.SenderID)
+    if err != nil {
+        if err == sql.ErrNoRows {
+            return orig, ErrMessageDoesNotExist
+        }
+        return orig, err
+    }
 
-	// Se si desidera modificare il contenuto in forward (ad esempio, aggiungere un prefisso) si può fare qui.
-	forwardedContent := orig.MessageContent
+    // 2) Unmarshal del JSON in orig.MessageContent
+    if err := json.Unmarshal([]byte(contentStr), &orig.MessageContent); err != nil {
+        return orig, err
+    }
 
-	// Inserisce il messaggio inoltrato nella conversazione di destinazione
-	now := time.Now()
-	res, err := db.c.Exec(
-		`INSERT INTO messages (conversation_id, message_content, timestamp, sender_id)
+    // 3) (Opzionale) Modifica del contenuto per il forward
+    forwardedContent := orig.MessageContent
+
+    // 4) Serializzo di nuovo il MessageContent in JSON
+    forwardBytes, err := json.Marshal(forwardedContent)
+    if err != nil {
+        return orig, err
+    }
+
+    // 5) Inserimento nella conversazione di destinazione
+    now := time.Now()
+    res, err := db.c.Exec(
+        `INSERT INTO messages (conversation_id, message_content, timestamp, sender_id)
          VALUES (?, ?, ?, ?)`,
-		targetConversationId, forwardedContent, now, senderID)
-	if err != nil {
-		return Message{}, err
-	}
+        targetConversationId,
+        string(forwardBytes),
+        now,
+        senderID,
+    )
+    if err != nil {
+        return orig, err
+    }
 
-	lastInsertID, err := res.LastInsertId()
-	if err != nil {
-		return Message{}, err
-	}
+    newID, err := res.LastInsertId()
+    if err != nil {
+        return orig, err
+    }
 
-	forwardedMessage := Message{
-		ID:             int(lastInsertID),
-		MessageContent: forwardedContent,
-		Timestamp:      now,
-	}
+    // 6) Costruzione del messaggio inoltrato da restituire
+    forwardedMsg := database.Message{
+        ID:             int(newID),
+        Timestamp:      now,
+        SenderID:       senderID,
+        MessageContent: forwardedContent,
+        // Preview, Comments, MessageStatus li puoi lasciare vuoti o popolare se ti servono
+    }
 
-	return forwardedMessage, nil
+    return forwardedMsg, nil
 }
 
 func (db *appdbimpl) DeleteMessage(conversationId string, messageId string, senderID uint64) error {
