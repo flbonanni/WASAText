@@ -4,6 +4,7 @@ import (
 	"database/sql"
     "encoding/json"
 	"time"
+	"strconv"
 )
 
 func (db *appdbimpl) SendMessage(conversationId string, m Message) (Message, error) {
