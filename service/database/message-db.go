@@ -36,18 +36,23 @@ func (db *appdbimpl) ForwardMessage(
     messageId string,
     targetConversationId string,
     recipientUsername string,
-    senderID string, // ora stringa, coerente con SenderID nel modello
+    senderID uint64,                      // ora uint64, come nell’interfaccia
 ) (Message, error) {
     var orig Message
-
-    // 1) Recupero del messaggio originale in una stringa
     var contentStr string
+
+    // 1) Recupera il messaggio originale
     err := db.c.QueryRow(
-        `SELECT id, message_content, timestamp, sender_id 
-           FROM messages 
+        `SELECT id, message_content, timestamp, sender_id
+           FROM messages
           WHERE id = ?`,
         messageId,
-    ).Scan(&orig.ID, &contentStr, &orig.Timestamp, &orig.SenderID)
+    ).Scan(
+        &orig.ID,
+        &contentStr,
+        &orig.Timestamp,
+        &orig.SenderID,                   // string, ok per scan
+    )
     if err != nil {
         if err == sql.ErrNoRows {
             return orig, ErrMessageDoesNotExist
@@ -60,7 +65,7 @@ func (db *appdbimpl) ForwardMessage(
         return orig, err
     }
 
-    // 3) (Opzionale) Modifica del contenuto per il forward
+    // 3) (Opzionale) modifica del contenuto per il forward
     forwardedContent := orig.MessageContent
 
     // 4) Serializzo di nuovo il MessageContent in JSON
@@ -69,7 +74,8 @@ func (db *appdbimpl) ForwardMessage(
         return orig, err
     }
 
-    // 5) Inserimento nella conversazione di destinazione
+    // 5) Inserimento nella conversazione di destinazione,
+    //    convertendo senderID in stringa
     now := time.Now()
     res, err := db.c.Exec(
         `INSERT INTO messages (conversation_id, message_content, timestamp, sender_id)
@@ -77,7 +83,7 @@ func (db *appdbimpl) ForwardMessage(
         targetConversationId,
         string(forwardBytes),
         now,
-        senderID,
+        strconv.FormatUint(senderID, 10), // conv uint64->string
     )
     if err != nil {
         return orig, err
@@ -88,13 +94,13 @@ func (db *appdbimpl) ForwardMessage(
         return orig, err
     }
 
-    // 6) Costruzione del messaggio inoltrato da restituire
+    // 6) Costruisco il Message inoltrato
     forwardedMsg := Message{
         ID:             int(newID),
         Timestamp:      now,
-        SenderID:       senderID,
+        SenderID:       strconv.FormatUint(senderID, 10),
         MessageContent: forwardedContent,
-        // Preview, Comments, MessageStatus li puoi lasciare vuoti o popolare se ti servono
+        // Preview, Comments, MessageStatus lasciati vuoti
     }
 
     return forwardedMsg, nil
