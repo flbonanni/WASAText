@@ -145,29 +145,33 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 
 
 func (rt *_router) deleteMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	var user User
-	// estrarre un token dall'header
-	//token := getToken(r.Header.Get("Authorization"))
-	dbUser, err := rt.db.CheckUserById(user.ToDatabase())
-	if err != nil {
-    	http.Error(w, err.Error(), http.StatusInternalServerError)
-    	return
-	}
-	user.FromDatabase(dbUser)
+    // 1) Autenticazione
+    token := getToken(r.Header.Get("Authorization"))
+    user := User{ID: token}
+    dbUser, err := rt.db.CheckUserById(user.ToDatabase())
+    if err != nil {
+        http.Error(w, "User does not exist", http.StatusUnauthorized)
+        return
+    }
+    user.FromDatabase(dbUser)
 
-	// Estrai parametri dalla URL
-	_ = ps.ByName("username")            // username del richiedente (per eventuali controlli)
-	conversationId := ps.ByName("conversation_id")
-	messageId := ps.ByName("message_id")
+    // 2) Parametri URL
+    username := ps.ByName("username")
+    // (opzionale) potresti voler controllare che username == user.Username
 
-	// Chiamata al layer DB per eliminare il messaggio (funzione ipotetica)
-	err = rt.db.DeleteMessage(conversationId, messageId, user.ID)
-	if err != nil {
-		// Gestisci eventuali errori (es. 404 per messaggio non trovato, 403 per permessi insufficienti)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+    conversationID := ps.ByName("conversation_id")
+    messageID := ps.ByName("message_id")
 
-	// Risposta senza contenuto (HTTP 204)
-	w.WriteHeader(http.StatusNoContent)
+    // 3) Chiamata al DB
+    if err := rt.db.DeleteMessage(conversationID, messageID, token); err != nil {
+        if err == database.ErrMessageDoesNotExist {
+            http.Error(w, "Message not found", http.StatusNotFound)
+        } else {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+        }
+        return
+    }
+
+    // 4) Risposta
+    w.WriteHeader(http.StatusNoContent) // 204
 }

@@ -107,20 +107,19 @@ func (db *appdbimpl) ForwardMessage(
     return forwardedMsg, nil
 }
 
-func (db *appdbimpl) DeleteMessage(conversationId string, messageId string, senderID uint64) error {
-	// Elimina il messaggio verificando che appartenga alla conversazione e sia stato inviato dall'utente
-	res, err := db.c.Exec(
-		`DELETE FROM messages WHERE id = ? AND conversation_id = ? AND sender_id = ?`,
-		messageId, conversationId, senderID)
-	if err != nil {
-		return err
-	}
-	affected, err := res.RowsAffected()
-	if err != nil {
-		return err
-	}
-	if affected == 0 {
-		return ErrMessageDoesNotExist
-	}
-	return nil
+func (db *appdbimpl) DeleteMessage(conversationID, messageID string, senderID uint64) error {
+    // opzionalmente verifica che il senderID corrisponda
+    res, err := db.c.Exec(
+        `DELETE FROM messages WHERE id = ? AND conversation_id = ? AND sender_id = ?`,
+        messageID, conversationID, senderID,
+    )
+    if err != nil {
+        return err
+    }
+    n, _ := res.RowsAffected()
+    if n == 0 {
+        return ErrMessageDoesNotExist
+    }
+    return nil
 }
+
