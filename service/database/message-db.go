@@ -4,7 +4,6 @@ import (
 	"database/sql"
     "encoding/json"
 	"time"
-	"github.com/flbonanni/WASAText/service/database"
 )
 
 func (db *appdbimpl) SendMessage(conversationId string, m Message) (Message, error) {
@@ -39,7 +38,7 @@ func (db *appdbimpl) ForwardMessage(
     recipientUsername string,
     senderID string, // ora stringa, coerente con SenderID nel modello
 ) (database.Message, error) {
-    var orig database.Message
+    var orig Message
 
     // 1) Recupero del messaggio originale in una stringa
     var contentStr string
