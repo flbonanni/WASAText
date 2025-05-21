@@ -10,8 +10,10 @@ var ErrConversationDoesNotExist = errors.New("conversation does not exist")
 
 func (db *appdbimpl) GetConversations(username string) ([]Conversation, error) {
 	rows, err := db.c.Query(
-		`SELECT conversation_id, participants, last_message FROM conversations 
-		 WHERE FIND_IN_SET(?, participants) > 0`, username)
+       	`SELECT conversation_id, participants, COALESCE(last_message, '') AS last_message
+          FROM conversations
+         WHERE ',' || participants || ',' LIKE '%,' || ? || ',%'`,
+       	username)
 	if err != nil {
 		return nil, err
 	}
