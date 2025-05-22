@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"io"
 	"log"
+	"time"
 )
 
 var (
@@ -61,24 +62,35 @@ func (db *appdbimpl) UpdateGroupPhoto(groupId string, adminID uint64, photoData 
     return nil
 }
 
-// CreateGroup crea un nuovo gruppo, impostando l'utente loggato come admin.
-// I membri vengono memorizzati come una stringa con valori separati da virgola.
-func (db *appdbimpl) CreateGroup(adminID uint64, groupName string, description string, members []string) (string, error) {
-	// Converti la slice dei membri in una stringa separata da virgole.
-	membersStr := strings.Join(members, ",")
-	res, err := db.c.Exec(`INSERT INTO groups (group_id, admin_id, group_name, description, members)
-     VALUES (?, ?, ?, ?, ?)`,
-		adminID, groupName, description, membersStr)
-	if err != nil {
-		return "", err
-	}
-	lastInsertID, err := res.LastInsertId()
-	if err != nil {
-		return "", err
-	}
-	// Genera un groupID (ad esempio "group12345")
-	groupID := fmt.Sprintf("group%d", lastInsertID)
-	return groupID, nil
+func (db *appdbimpl) CreateGroup(
+    adminID uint64,
+    groupName string,
+    description string,
+    members []string,
+) (string, error) {
+    // 1) Genera un ID univoco per il gruppo
+    //    Qui usiamo un prefisso + timestamp UNIX, ma puoi sostituire con uuid.New().String()
+    groupID := fmt.Sprintf("group%d", time.Now().UnixNano())
+
+    // 2) Prepara la stringa dei membri
+    membersStr := strings.Join(members, ",")
+
+    // 3) Esegui l'INSERT con tutti e 5 i placeholder
+    _, err := db.c.Exec(
+        `INSERT INTO groups (group_id, admin_id, group_name, description, members)
+         VALUES (?, ?, ?, ?, ?)`,
+        groupID,
+        adminID,
+        groupName,
+        description,
+        membersStr,
+    )
+    if err != nil {
+        return "", err
+    }
+
+    // 4) Ritorna il nuovo groupID
+    return groupID, nil
 }
 
 // AddMemberToGroup aggiunge un nuovo membro a un gruppo esistente.
