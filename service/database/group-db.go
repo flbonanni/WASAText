@@ -6,6 +6,7 @@ import (
 	"strings"
 	"mime/multipart"
 	"io"
+	"log"
 )
 
 var (
@@ -51,9 +52,7 @@ func (db *appdbimpl) UpdateGroupPhoto(groupId string, adminID uint64, photoData 
 
     // 3) Controlla quante righe sono state modificate
     affected, err := res.RowsAffected()
-    if err != nil {
-        return err
-    }
+    log.Printf("Rows affected updating group photo: %d", affected)
     if affected == 0 {
         return ErrGroupNotUpdated
     }
