@@ -52,7 +52,8 @@ func (db *appdbimpl) UpdateGroupPhoto(groupId string, adminID uint64, photoData 
 
     // 3) Controlla quante righe sono state modificate
     affected, err := res.RowsAffected()
-    log.Printf("Rows affected updating group photo: %d", affected)
+	log.Printf("Trying to update group %s with admin ID %d", groupId, adminID)
+	log.Printf("Rows affected: %d", affected)
     if affected == 0 {
         return ErrGroupNotUpdated
     }
