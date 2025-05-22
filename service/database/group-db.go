@@ -66,7 +66,8 @@ func (db *appdbimpl) UpdateGroupPhoto(groupId string, adminID uint64, photoData 
 func (db *appdbimpl) CreateGroup(adminID uint64, groupName string, description string, members []string) (string, error) {
 	// Converti la slice dei membri in una stringa separata da virgole.
 	membersStr := strings.Join(members, ",")
-	res, err := db.c.Exec(`INSERT INTO groups (admin_id, group_name, description, members) VALUES (?, ?, ?, ?)`,
+	res, err := db.c.Exec(`INSERT INTO groups (group_id, admin_id, group_name, description, members)
+     VALUES (?, ?, ?, ?, ?)`,
 		adminID, groupName, description, membersStr)
 	if err != nil {
 		return "", err

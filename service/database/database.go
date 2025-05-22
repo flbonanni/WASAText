@@ -194,7 +194,7 @@ func New(db *sql.DB) (AppDatabase, error) {
         `,
         "groups": `
             CREATE TABLE IF NOT EXISTS groups (
-                group_id    TEXT    PRIMARY KEY,
+                group_id    TEXT    NOT NULL PRIMARY KEY,
                 admin_id    INTEGER NOT NULL,
                 group_name  TEXT    NOT NULL,
                 description TEXT,
