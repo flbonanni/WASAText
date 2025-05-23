@@ -8,6 +8,7 @@ import (
     "github.com/flbonanni/WASAText/service/database"
 	"github.com/julienschmidt/httprouter"
     "strconv"
+    "fmt"
 )
 
 func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
