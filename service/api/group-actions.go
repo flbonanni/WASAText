@@ -177,28 +177,41 @@ func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprou
 
 
 func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-    var user database.User
-    var requestUser User
-	token := getToken(r.Header.Get("Authorization"))
-	user.ID = token
-	user, err := rt.db.CheckUserById(requestUser.ToDatabase())
+    // 1) Autenticazione
+    token := getToken(r.Header.Get("Authorization"))
+    user := User{ID: token}
+
+    dbUser, err := rt.db.CheckUserById(user.ToDatabase())
     if err != nil {
-        http.Error(w, err.Error(), http.StatusUnauthorized)
+        http.Error(w, "User does not exist", http.StatusUnauthorized)
         return
     }
-    
+    user.FromDatabase(dbUser)
+
+    // 2) Parametri URL
     groupId := ps.ByName("group_id")
     memberUsername := ps.ByName("member_username")
-    if memberUsername != user.CurrentUsername {
+
+    // 3) Controlla che sia lo user che se ne vuole andare
+    if memberUsername != user.Username {
         http.Error(w, "Unauthorized action", http.StatusForbidden)
         return
     }
-    
-    err = rt.db.RemoveMemberFromGroup(groupId, memberUsername)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
+
+    // 4) Rimuovi il membro
+    if err := rt.db.RemoveMemberFromGroup(groupId, memberUsername); err != nil {
+        switch err {
+        case database.ErrGroupNotFound:
+            http.Error(w, "Group not found", http.StatusNotFound)
+        case fmt.Errorf("member not found in group"):
+            http.Error(w, "Member not in group", http.StatusNotFound)
+        default:
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+        }
         return
     }
-    
+
+    // 5) Risposta 204 No Content
     w.WriteHeader(http.StatusNoContent)
 }
+
