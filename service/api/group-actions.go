@@ -119,38 +119,61 @@ func (rt *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httpro
 }
 
 func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-    var user database.User
-    var requestUser User
-	token := getToken(r.Header.Get("Authorization"))
-	user.ID = token
-	user, err := rt.db.CheckUserById(requestUser.ToDatabase())
+    // 1) Estraggo token e costruisco user
+    token := getToken(r.Header.Get("Authorization"))
+    user := User{ID: token}
+
+    // 2) Verifico che esista nel DB
+    dbUser, err := rt.db.CheckUserById(user.ToDatabase())
     if err != nil {
-        http.Error(w, err.Error(), http.StatusUnauthorized)
+        http.Error(w, "User does not exist", http.StatusUnauthorized)
         return
     }
-    
-    groupId := ps.ByName("group_id")
-    var reqBody map[string]string
+    user.FromDatabase(dbUser)
+
+    // (Facoltativo) Controlla che il path param username corrisponda
+    usernameParam := ps.ByName("username")
+    if usernameParam != user.Username {
+        http.Error(w, "username mismatch", http.StatusForbidden)
+        return
+    }
+
+    // 3) Leggo il group_id
+    groupID := ps.ByName("group_id")
+
+    // 4) Decodifico il body
+    var reqBody struct {
+        NewMemberUsername string `json:"new_member_username"`
+    }
     if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
-        http.Error(w, "Invalid request body", http.StatusBadRequest)
+        http.Error(w, "Invalid JSON", http.StatusBadRequest)
         return
     }
-    newMember, ok := reqBody["new_member_username"]
-    if !ok || len(newMember) < 3 || len(newMember) > 30 {
+    newMember := reqBody.NewMemberUsername
+    if len(newMember) < 3 || len(newMember) > 30 {
         http.Error(w, "Invalid member username", http.StatusBadRequest)
         return
     }
-    
-    err = rt.db.AddMemberToGroup(groupId, user.ID, newMember)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
+
+    // 5) Invoco il DB
+    if err := rt.db.AddMemberToGroup(groupID, user.ID, newMember); err != nil {
+        switch err {
+        case database.ErrGroupNotFound:
+            http.Error(w, "Group not found", http.StatusNotFound)
+        case fmt.Errorf("member already exists"):
+            http.Error(w, "Member already exists", http.StatusConflict)
+        default:
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+        }
         return
     }
-    
+
+    // 6) Risposta
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(map[string]string{"message": "Member added successfully."})
+    _ = json.NewEncoder(w).Encode(map[string]string{"message": "Member added successfully."})
 }
+
 
 func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
     var user database.User
