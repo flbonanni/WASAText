@@ -193,7 +193,7 @@ func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprou
     memberUsername := ps.ByName("member_username")
 
     // 3) Controlla che sia lo user che se ne vuole andare
-    if memberUsername != user.Username {
+    if memberUsername != user.CurrentUsername {
         http.Error(w, "Unauthorized action", http.StatusForbidden)
         return
     }
