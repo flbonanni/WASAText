@@ -134,7 +134,7 @@ func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprou
 
     // (Facoltativo) Controlla che il path param username corrisponda
     usernameParam := ps.ByName("username")
-    if usernameParam != user.Username {
+    if usernameParam != user.CurrentUsername {
         http.Error(w, "username mismatch", http.StatusForbidden)
         return
     }
