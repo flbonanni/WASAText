@@ -50,9 +50,17 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	response := map[string]string{
 		"message": "Emoji reaction added successfully.",
 	}
+
+	// Imposta l’header prima di scrivere il corpo
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(response)
+
+	// Serializza e invia la risposta controllando l’errore
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(response); err != nil {
+		// Se fallisce la serializzazione, segnala un 500
+		http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
