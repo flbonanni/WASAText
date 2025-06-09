@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"fmt"
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
