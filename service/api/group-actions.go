@@ -44,7 +44,11 @@ func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httpr
     
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(map[string]string{"message": "Group name updated successfully."})
+    encoder := json.NewEncoder(w)
+    if err := encoder.Encode(map[string]string{"message": "Group name updated successfully."}); err != nil {
+        http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+        return
+    }
 }
 
 func (rt *_router) setGroupPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -78,9 +82,13 @@ func (rt *_router) setGroupPhoto(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Group picture uploaded successfully."})
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    encoder := json.NewEncoder(w)
+    if err := encoder.Encode(map[string]string{"message": "Group picture uploaded successfully."}); err != nil {
+        http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+        return
+    }
 }
 
 func (rt *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -116,7 +124,11 @@ func (rt *_router) createGroup(w http.ResponseWriter, r *http.Request, ps httpro
     
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusCreated)
-    json.NewEncoder(w).Encode(map[string]string{"group_id": groupId, "group_name": reqBody.GroupName})
+    encoder := json.NewEncoder(w)
+    if err := encoder.Encode(map[string]string{"group_id": groupId, "group_name": reqBody.GroupName}); err != nil {
+        http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+        return
+    }
 }
 
 func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -172,7 +184,11 @@ func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprou
     // 6) Risposta
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
-    _ = json.NewEncoder(w).Encode(map[string]string{"message": "Member added successfully."})
+    encoder := json.NewEncoder(w)
+    if err := encoder.Encode(map[string]string{"message": "Member added successfully."}); err != nil {
+        http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+        return
+    }
 }
 
 

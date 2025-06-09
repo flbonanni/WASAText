@@ -6,6 +6,7 @@ import (
 	"bytes"
     "io"
     "time"
+    "fmt"
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
@@ -25,9 +26,12 @@ func (rt *_router) getUserPicture(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	// Respond with the image
-	w.Header().Set("Content-Type", "image/jpeg")
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(picture)
+    w.Header().Set("Content-Type", "image/jpeg")
+    w.WriteHeader(http.StatusOK)
+    if _, err := w.Write(picture); err != nil {
+        http.Error(w, fmt.Sprintf("impossibile inviare l’immagine: %v", err), http.StatusInternalServerError)
+        return
+    }
 }
 
 func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -72,5 +76,9 @@ func (rt *_router) setMyPhoto(w http.ResponseWriter, r *http.Request, ps httprou
     // 7. Rispondi con il JSON del record photo
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusCreated)
-    _ = json.NewEncoder(w).Encode(photo)
+    encoder := json.NewEncoder(w)
+    if err := encoder.Encode(photo); err != nil {
+        http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+        return
+    }
 }

@@ -6,6 +6,7 @@ import (
     "net/http"
     "strconv"
     "time"
+    "fmt"
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/flbonanni/WASAText/service/database"
@@ -90,8 +91,10 @@ func (rt *_router) sendMessage(w http.ResponseWriter, r *http.Request, ps httpro
     // 6) Risposta JSON
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusCreated)
-    if err := json.NewEncoder(w).Encode(msgSaved); err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
+    encoder := json.NewEncoder(w)
+    if err := encoder.Encode(msgSaved); err != nil {
+        http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+        return
     }
 }
 
@@ -138,9 +141,13 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	// Rispondi con il messaggio inoltrato (HTTP 200)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(forwardedMsg)
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    encoder := json.NewEncoder(w)
+    if err := encoder.Encode(forwardedMsg); err != nil {
+        http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+        return
+    }
 }
 
 

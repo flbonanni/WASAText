@@ -3,7 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-
+	"fmt"
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/flbonanni/WASAText/service/database"
 	"github.com/julienschmidt/httprouter"
@@ -33,7 +33,11 @@ func (rt *_router) getMyConversations(w http.ResponseWriter, r *http.Request, ps
 	// Respond with the conversations
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(conversations)
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(conversations); err != nil {
+		http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -62,7 +66,11 @@ func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps ht
     }
 
     // 4) Rispondi con la conversazione
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    _ = json.NewEncoder(w).Encode(conv)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(conv); err != nil {
+		http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+		return
+	}
 }

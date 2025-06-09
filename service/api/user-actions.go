@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"fmt"
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
 )
@@ -26,7 +27,11 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	// risposta in json, risposta positiva, e json del nuovo utente inserito nella risposta w
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(user)
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(user); err != nil {
+		http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -66,8 +71,10 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	// Invia la risposta JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(profile); err != nil {
-		http.Error(w, "Errore nella codifica della risposta", http.StatusInternalServerError)
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(profile); err != nil {
+		http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -139,5 +146,9 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	// scrivere risposta
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(user)
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(user); err != nil {
+		http.Error(w, fmt.Sprintf("impossibile serializzare in JSON: %v", err), http.StatusInternalServerError)
+		return
+	}
 }
