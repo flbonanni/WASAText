@@ -1,9 +1,10 @@
 package api
 
 import (
+	"time"
+
 	"github.com/flbonanni/WASAText/service/database"
-) 
-import "time"
+)
 
 type User struct {
 	CurrentUsername string `json:"current_username"`
@@ -11,9 +12,9 @@ type User struct {
 }
 
 type Profile struct {
-	Username		string `json:"username"`
-	ID				uint64 `json:"id"`
-	RequestID		uint64 `json:"request_id"`
+	Username  string `json:"username"`
+	ID        uint64 `json:"id"`
+	RequestID uint64 `json:"request_id"`
 }
 
 type Conversation struct {
@@ -62,10 +63,10 @@ type MessageContent struct {
 }
 
 type Photo struct {
-	Id            uint64 `json:"id"`
-	UserId        uint64 `json:"userId"`
-	File          []byte `json:"file"`
-	Date          string `json:"date"`
+	Id     uint64 `json:"id"`
+	UserId uint64 `json:"userId"`
+	File   []byte `json:"file"`
+	Date   string `json:"date"`
 }
 
 func (u *User) FromDatabase(user database.User) {
@@ -75,7 +76,7 @@ func (u *User) FromDatabase(user database.User) {
 
 func (u *User) ToDatabase() database.User {
 	return database.User{
-		ID:       u.ID,
+		ID:              u.ID,
 		CurrentUsername: u.CurrentUsername,
 	}
 }

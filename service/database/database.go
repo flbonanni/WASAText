@@ -34,8 +34,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"time"
 	"mime/multipart"
+	"time"
 )
 
 type User struct {
@@ -44,9 +44,9 @@ type User struct {
 }
 
 type Profile struct {
-	Username		string `json:"username"`
-	ID				int    `json:"id"`
-	RequestID		int    `json:"request_id"`
+	Username  string `json:"username"`
+	ID        int    `json:"id"`
+	RequestID int    `json:"request_id"`
 }
 
 type Conversation struct {
@@ -95,10 +95,10 @@ type MessageContent struct {
 }
 
 type Photo struct {
-	Id            uint64 `json:"id"`
-	UserId        uint64 `json:"userId"`
-	File          []byte `json:"file"`
-	Date          string `json:"date"`
+	Id     uint64 `json:"id"`
+	UserId uint64 `json:"userId"`
+	File   []byte `json:"file"`
+	Date   string `json:"date"`
 }
 
 var ErrUserDoesNotExist = errors.New("User does not exist")
@@ -122,7 +122,7 @@ type AppDatabase interface {
 
 	UpdateGroupName(string, uint64, string) error
 	UpdateGroupPhoto(string, uint64, multipart.File) error
-	CreateGroup(uint64, string,  string, []string) (string, error)
+	CreateGroup(uint64, string, string, []string) (string, error)
 	AddMemberToGroup(string, uint64, string) error
 	RemoveMemberFromGroup(string, string) error
 
@@ -148,27 +148,27 @@ type appdbimpl struct {
 // New returns a new instance of AppDatabase based on the SQLite connection `db`.
 // `db` is required - an error will be returned if `db` is `nil`.
 func New(db *sql.DB) (AppDatabase, error) {
-    if db == nil {
-        return nil, errors.New("database is required when building a AppDatabase")
-    }
+	if db == nil {
+		return nil, errors.New("database is required when building a AppDatabase")
+	}
 
-    // mappa nome tabella → statement di creazione
-    tables := map[string]string{
-        "users": `
+	// mappa nome tabella → statement di creazione
+	tables := map[string]string{
+		"users": `
             CREATE TABLE IF NOT EXISTS users (
                 id       INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT    UNIQUE NOT NULL,
                 photo    BLOB
             );
         `,
-        "conversations": `
+		"conversations": `
             CREATE TABLE IF NOT EXISTS conversations (
                 conversation_id TEXT PRIMARY KEY,
                 participants    TEXT NOT NULL,
                 last_message    TEXT
             );
         `,
-        "messages": `
+		"messages": `
             CREATE TABLE IF NOT EXISTS messages (
                 id               INTEGER PRIMARY KEY AUTOINCREMENT,
                 conversation_id  TEXT    NOT NULL,
@@ -179,7 +179,7 @@ func New(db *sql.DB) (AppDatabase, error) {
                 FOREIGN KEY(sender_id) REFERENCES users(id)
             );
         `,
-        "comments": `
+		"comments": `
             CREATE TABLE IF NOT EXISTS comments (
                 id              INTEGER PRIMARY KEY AUTOINCREMENT,
                 conversation_id TEXT    NOT NULL,
@@ -192,7 +192,7 @@ func New(db *sql.DB) (AppDatabase, error) {
                 FOREIGN KEY(user_id)         REFERENCES users(id)
             );
         `,
-        "groups": `
+		"groups": `
             CREATE TABLE IF NOT EXISTS groups (
                 group_id    TEXT    NOT NULL PRIMARY KEY,
                 admin_id    INTEGER NOT NULL,
@@ -203,17 +203,17 @@ func New(db *sql.DB) (AppDatabase, error) {
                 FOREIGN KEY(admin_id) REFERENCES users(id)
             );
         `,
-    }
+	}
 
-    // esegue tutti i CREATE TABLE IF NOT EXISTS
-    for tbl, stmt := range tables {
-        if _, err := db.Exec(stmt); err != nil {
-            return nil, fmt.Errorf("error creating table %q: %w", tbl, err)
-        }
-    }
+	// esegue tutti i CREATE TABLE IF NOT EXISTS
+	for tbl, stmt := range tables {
+		if _, err := db.Exec(stmt); err != nil {
+			return nil, fmt.Errorf("error creating table %q: %w", tbl, err)
+		}
+	}
 
-    // alla fine, restituisci l’istanza pronta
-    return &appdbimpl{c: db}, nil
+	// alla fine, restituisci l’istanza pronta
+	return &appdbimpl{c: db}, nil
 }
 
 func (db *appdbimpl) Ping() error {
