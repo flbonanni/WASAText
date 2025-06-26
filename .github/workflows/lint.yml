@@ -1,0 +1,29 @@
+name: "Go Lint"
+
+on:
+  pull_request:
+    paths:
+      - '**/*.go'
+
+jobs:
+  lint:
+    runs-on: windows-latest   # o ubuntu-latest, in base a dove vuoi farlo girare
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: "1.17"
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/golangci-lint
+          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('.github/workflows/lint.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-golangci-lint-
+
+      - uses: golangci/golangci-lint-action@v4
+        with:
+          version: "v2.1.6"
+          args: run --timeout 5m --out-format github-actions
