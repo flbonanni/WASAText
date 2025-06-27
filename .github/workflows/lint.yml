@@ -1,13 +1,18 @@
 name: "Go Lint"
 
 on:
+  push:
+    branches:
+      - master           # o il nome del tuo branch principale
+    paths:
+      - '**/*.go'
   pull_request:
     paths:
       - '**/*.go'
 
 jobs:
   lint:
-    runs-on: windows-latest   # o ubuntu-latest, in base a dove vuoi farlo girare
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
