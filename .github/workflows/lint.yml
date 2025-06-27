@@ -3,32 +3,38 @@ name: "Go Lint"
 on:
   push:
     branches:
-      - main           # o il nome del tuo branch principale
+      - main
     paths:
       - '**/*.go'
   pull_request:
     paths:
       - '**/*.go'
+  workflow_dispatch:
 
 jobs:
   lint:
     runs-on: windows-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-go@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
           go-version: "1.17"
 
-      - uses: actions/cache@v3
+      - name: Cache golangci-lint
+        uses: actions/cache@v3
+        continue-on-error: true
         with:
           path: ~/.cache/golangci-lint
           key: ${{ runner.os }}-golangci-lint-${{ hashFiles('.github/workflows/lint.yml') }}
           restore-keys: |
             ${{ runner.os }}-golangci-lint-
 
-      - uses: golangci/golangci-lint-action@v4
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v4
         with:
           version: "v2.1.6"
-          args: run ./... --timeout 5m --out-format github-actions
+          args: |
+            run --config .golangci.yml ./... --timeout 5m --out-format github-actions --verbose
