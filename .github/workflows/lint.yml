@@ -3,7 +3,7 @@ name: "Go Lint"
 on:
   push:
     branches:
-      - master           # o il nome del tuo branch principale
+      - main           # o il nome del tuo branch principale
     paths:
       - '**/*.go'
   pull_request:
