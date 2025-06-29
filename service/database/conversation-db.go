@@ -10,10 +10,10 @@ var ErrConversationDoesNotExist = errors.New("conversation does not exist")
 
 func (db *appdbimpl) GetConversations(username string) ([]Conversation, error) {
 	rows, err := db.c.Query(
-       	`SELECT conversation_id, participants, COALESCE(last_message, '') AS last_message
+		`SELECT conversation_id, participants, COALESCE(last_message, '') AS last_message
           FROM conversations
          WHERE ',' || participants || ',' LIKE '%,' || ? || ',%'`,
-       	username)
+		username)
 	if err != nil {
 		return nil, err
 	}
@@ -37,42 +37,42 @@ func (db *appdbimpl) GetConversations(username string) ([]Conversation, error) {
 }
 
 func (db *appdbimpl) GetConversation(conversationId string) (Conversation, error) {
-    var conv Conversation
-    var participantsStr string
+	var conv Conversation
+	var participantsStr string
 
-    // COALESCE sostituisce NULL con stringa vuota
-    err := db.c.QueryRow(
-        `SELECT conversation_id,
+	// COALESCE sostituisce NULL con stringa vuota
+	err := db.c.QueryRow(
+		`SELECT conversation_id,
                 participants,
                 COALESCE(last_message, '') AS last_message
            FROM conversations
           WHERE conversation_id = ?`,
-        conversationId,
-    ).Scan(&conv.ConversationID, &participantsStr, &conv.LastMessage)
-    if err != nil {
-        if err == sql.ErrNoRows {
-            return conv, ErrConversationDoesNotExist
-        }
-        return conv, err
-    }
+		conversationId,
+	).Scan(&conv.ConversationID, &participantsStr, &conv.LastMessage)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return conv, ErrConversationDoesNotExist
+		}
+		return conv, err
+	}
 
-    conv.Participants = strings.Split(participantsStr, ",")
-    return conv, nil
+	conv.Participants = strings.Split(participantsStr, ",")
+	return conv, nil
 }
 
 func (db *appdbimpl) CreateConversation(conversationId string, participants []string) (Conversation, error) {
-    participantsStr := strings.Join(participants, ",")
-    _, err := db.c.Exec(
-        `INSERT INTO conversations (conversation_id, participants, last_message)
+	participantsStr := strings.Join(participants, ",")
+	_, err := db.c.Exec(
+		`INSERT INTO conversations (conversation_id, participants, last_message)
          VALUES (?, ?, NULL)`,
-        conversationId, participantsStr,
-    )
-    if err != nil {
-        return Conversation{}, err
-    }
-    return Conversation{
-    	ConversationID: conversationId,
-    	Participants:   participants,
-    	LastMessage:    "",
+		conversationId, participantsStr,
+	)
+	if err != nil {
+		return Conversation{}, err
+	}
+	return Conversation{
+		ConversationID: conversationId,
+		Participants:   participants,
+		LastMessage:    "",
 	}, nil
 }

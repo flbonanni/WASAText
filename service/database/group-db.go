@@ -1,12 +1,12 @@
 package database
 
 import (
-	"fmt"
 	"database/sql"
-	"strings"
-	"mime/multipart"
+	"fmt"
 	"io"
 	"log"
+	"mime/multipart"
+	"strings"
 	"time"
 )
 
@@ -31,66 +31,66 @@ func (db *appdbimpl) UpdateGroupName(groupId string, adminID uint64, groupName s
 }
 
 func (db *appdbimpl) UpdateGroupPhoto(groupId string, adminID uint64, photoData multipart.File) error {
-    defer photoData.Close()
+	defer photoData.Close()
 
-    // 1) Leggi i byte del file
-    photoBytes, err := io.ReadAll(photoData)
-    if err != nil {
-        return err
-    }
+	// 1) Leggi i byte del file
+	photoBytes, err := io.ReadAll(photoData)
+	if err != nil {
+		return err
+	}
 
-    // 2) Esegui l'UPDATE SOLO su group_id
-    res, err := db.c.Exec(
-        `UPDATE groups
+	// 2) Esegui l'UPDATE SOLO su group_id
+	res, err := db.c.Exec(
+		`UPDATE groups
             SET photo = ?
           WHERE group_id = ?`,
-        photoBytes,
-        groupId,
-    )
-    if err != nil {
-        return err
-    }
+		photoBytes,
+		groupId,
+	)
+	if err != nil {
+		return err
+	}
 
-    // 3) Controlla quante righe sono state modificate
-    affected, err := res.RowsAffected()
+	// 3) Controlla quante righe sono state modificate
+	affected, err := res.RowsAffected()
 	log.Printf("Trying to update group %s with admin ID %d", groupId, adminID)
 	log.Printf("Rows affected: %d", affected)
-    if affected == 0 {
-        return ErrGroupNotUpdated
-    }
+	if affected == 0 {
+		return ErrGroupNotUpdated
+	}
 
-    return nil
+	return nil
 }
 
 func (db *appdbimpl) CreateGroup(
-    adminID uint64,
-    groupName string,
-    description string,
-    members []string,
+	adminID uint64,
+	groupName string,
+	description string,
+	members []string,
 ) (string, error) {
-    // 1) Genera un ID univoco per il gruppo
-    //    Qui usiamo un prefisso + timestamp UNIX, ma puoi sostituire con uuid.New().String()
-    groupID := fmt.Sprintf("group%d", time.Now().UnixNano())
+	// 1) Genera un ID univoco per il gruppo
+	//    Qui usiamo un prefisso + timestamp UNIX, ma puoi sostituire con uuid.New().String()
+	groupID := fmt.Sprintf("group%d", time.Now().UnixNano())
 
-    // 2) Prepara la stringa dei membri
-    membersStr := strings.Join(members, ",")
+	// 2) Prepara la stringa dei membri
+	membersStr := strings.Join(members, ",")
 
-    // 3) Esegui l'INSERT con tutti e 5 i placeholder
-    _, err := db.c.Exec(
-        `INSERT INTO groups (group_id, admin_id, group_name, description, members)
+	// 3) Esegui l'INSERT con tutti e 5 i placeholder
+	_, err := db.c.Exec(
+		`INSERT INTO groups (group_id, admin_id, group_name, description, members)
          VALUES (?, ?, ?, ?, ?)`,
-        groupID,
-        adminID,
-        groupName,
-        description,
-        membersStr,
-    )
-    if err != nil {
-        return "", err
-    }
+		groupID,
+		adminID,
+		groupName,
+		description,
+		membersStr,
+	)
+	if err != nil {
+		return "", err
+	}
 
-    // 4) Ritorna il nuovo groupID
-    return groupID, nil
+	// 4) Ritorna il nuovo groupID
+	return groupID, nil
 }
 
 // AddMemberToGroup aggiunge un nuovo membro a un gruppo esistente.

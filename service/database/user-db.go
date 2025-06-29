@@ -25,7 +25,7 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 	// Recupera l'ID dell'utente appena inserito
 	lastInsertID, err := res.LastInsertId()
 	if err != nil {
-    return User{}, err
+		return User{}, err
 	}
 
 	// CONVERSIONE DA int64 A int

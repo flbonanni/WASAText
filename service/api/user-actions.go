@@ -2,10 +2,10 @@ package api
 
 import (
 	"encoding/json"
-	"net/http"
 	"fmt"
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
+	"net/http"
 )
 
 func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -63,7 +63,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	// Compila il profilo da restituire
 	profile := Profile{
 		RequestID: requestUser.ID,
-		ID:    targetUser.ID,
+		ID:        targetUser.ID,
 		Username:  targetUser.CurrentUsername,
 		// Aggiungi altri campi di Profile se necessario
 	}
@@ -77,8 +77,6 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 		return
 	}
 }
-
-
 
 // func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 // 	var user User
@@ -97,7 +95,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 // 	requestUser.FromDatabase(dbrequestuser)
 // 	// popola lo username dal parametro
 // 	username := ps.ByName("username")
-	
+
 // 	// stessa cosa di prima per identificare l'utente nel db
 // 	dbuser, err := rt.db.GetUserId(username)
 // 	if err != nil {
@@ -114,7 +112,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 // 		http.Error(w, err.Error(), http.StatusInternalServerError)
 // 		return
 // 	}
-	
+
 // 	w.Header().Set("Content-Type", "application/json")
 // 	w.WriteHeader(http.StatusOK)
 // 	_ = json.NewEncoder(w).Encode(profile)
@@ -122,7 +120,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 
 func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
-	// estrarre username 
+	// estrarre username
 	username := ps.ByName("username")
 	// controllo se esiste utente
 	err := json.NewDecoder(r.Body).Decode(&user)

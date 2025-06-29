@@ -2,8 +2,8 @@ package api
 
 import (
 	"encoding/json"
-	"net/http"
 	"fmt"
+	"net/http"
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
@@ -22,7 +22,7 @@ func (rt *_router) commentMessage(w http.ResponseWriter, r *http.Request, ps htt
 	user.FromDatabase(dbUser)
 
 	// Estrai parametri dalla URL
-	_ = ps.ByName("username")            // eventuale controllo sulla coerenza con l'utente loggato
+	_ = ps.ByName("username") // eventuale controllo sulla coerenza con l'utente loggato
 	conversationId := ps.ByName("conversation_id")
 	messageId := ps.ByName("message_id")
 
@@ -77,7 +77,7 @@ func (rt *_router) uncommentMessage(w http.ResponseWriter, r *http.Request, ps h
 	user.FromDatabase(dbuser)
 
 	// Estrai parametri dalla URL
-	_ = ps.ByName("username")            // eventuale controllo sull'utente loggato
+	_ = ps.ByName("username") // eventuale controllo sull'utente loggato
 	conversationId := ps.ByName("conversation_id")
 	messageId := ps.ByName("message_id")
 
