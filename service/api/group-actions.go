@@ -5,12 +5,12 @@ import (
 	"net/http"
 
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/flbonanni/WASAText/service/database"
 	"github.com/julienschmidt/httprouter"
-
 )
 
 func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -76,7 +76,11 @@ func (rt *_router) setGroupPhoto(w http.ResponseWriter, r *http.Request, ps http
 		http.Error(w, "Invalid file upload", http.StatusBadRequest)
 		return
 	}
-	defer file.Close()
+	defer func() {
+		if cerr := file.Close(); cerr != nil {
+			log.Printf("setGroupPhoto: errore chiusura file: %v", cerr)
+		}
+	}()
 
 	err = rt.db.UpdateGroupPhoto(groupId, user.ID, file)
 	if err != nil {
