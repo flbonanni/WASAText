@@ -1,9 +1,10 @@
 package api
 
 import (
+	"time"
+
 	"github.com/flbonanni/WASAText/service/database"
 )
-import "time"
 
 type User struct {
 	CurrentUsername string `json:"current_username"`

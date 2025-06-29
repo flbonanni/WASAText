@@ -5,10 +5,12 @@ import (
 	"net/http"
 
 	"fmt"
+	"strconv"
+
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
 	"github.com/flbonanni/WASAText/service/database"
 	"github.com/julienschmidt/httprouter"
-	"strconv"
+
 )
 
 func (rt *_router) setGroupName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {

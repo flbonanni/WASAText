@@ -125,7 +125,7 @@ func (rt *_router) forwardMessage(w http.ResponseWriter, r *http.Request, ps htt
 
 	// Recupera i valori richiesti dalla mappa
 	targetConversationId, ok := reqBody["target_conversation_id"]
-	if !ok || targetConversationId == "" {
+	if !ok || len(targetConversationId) < 1 {
 		http.Error(w, "target_conversation_id mancante", http.StatusBadRequest)
 		return
 	}
