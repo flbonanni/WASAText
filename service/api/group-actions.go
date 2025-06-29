@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/flbonanni/WASAText/service/api/reqcontext"
@@ -76,11 +75,7 @@ func (rt *_router) setGroupPhoto(w http.ResponseWriter, r *http.Request, ps http
 		http.Error(w, "Invalid file upload", http.StatusBadRequest)
 		return
 	}
-	defer func() {
-		if cerr := file.Close(); cerr != nil {
-			log.Printf("setGroupPhoto: errore chiusura file: %v", cerr)
-		}
-	}()
+	defer file.Close()
 
 	err = rt.db.UpdateGroupPhoto(groupId, user.ID, file)
 	if err != nil {
