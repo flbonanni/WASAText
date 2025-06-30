@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -99,7 +100,7 @@ func (db *appdbimpl) AddMemberToGroup(groupId string, adminID uint64, newMemberU
 	var membersStr string
 	err := db.c.QueryRow(`SELECT members FROM groups WHERE group_id = ? AND admin_id = ?`, groupId, adminID).Scan(&membersStr)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return ErrGroupNotFound
 		}
 		return err
@@ -132,7 +133,7 @@ func (db *appdbimpl) RemoveMemberFromGroup(groupId string, memberUsername string
 	var membersStr string
 	err := db.c.QueryRow(`SELECT members FROM groups WHERE group_id = ?`, groupId).Scan(&membersStr)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return ErrGroupNotFound
 		}
 		return err
