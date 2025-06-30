@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -57,7 +58,7 @@ func (rt *_router) getConversation(w http.ResponseWriter, r *http.Request, ps ht
 	// 3) Recupera la conversazione
 	conv, err := rt.db.GetConversation(conversationID)
 	if err != nil {
-		if err == database.ErrConversationDoesNotExist {
+		if errors.Is(err, database.ErrConversationDoesNotExist) {
 			http.Error(w, "Conversation does not exist", http.StatusNotFound)
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
