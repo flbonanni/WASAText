@@ -108,6 +108,8 @@ var ErrFollowDoesNotExist = errors.New("Follow does not exist")
 var ErrCommentDoesNotExist = errors.New("Comment does not exist")
 var ErrLikeDoesNotExist = errors.New("Like does not exist")
 var ErrMessageDoesNotExist = errors.New("Message does not exist")
+var ErrMemberAlreadyExists = errors.New("Member already exists")
+var ErrMemberNotFoundInGroup = errors.New("Member not found in group")
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {

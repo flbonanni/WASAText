@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -176,10 +177,10 @@ func (rt *_router) addToGroup(w http.ResponseWriter, r *http.Request, ps httprou
 
 	// 5) Invoco il DB
 	if err := rt.db.AddMemberToGroup(groupID, user.ID, newMember); err != nil {
-		switch err {
-		case database.ErrGroupNotFound:
+		switch {
+		case errors.Is(err, database.ErrGroupNotFound):
 			http.Error(w, "Group not found", http.StatusNotFound)
-		case fmt.Errorf("member already exists"):
+		case errors.Is(err, database.ErrMemberAlreadyExists):
 			http.Error(w, "Member already exists", http.StatusConflict)
 		default:
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -221,10 +222,10 @@ func (rt *_router) leaveGroup(w http.ResponseWriter, r *http.Request, ps httprou
 
 	// 4) Rimuovi il membro
 	if err := rt.db.RemoveMemberFromGroup(groupId, memberUsername); err != nil {
-		switch err {
-		case database.ErrGroupNotFound:
+		switch {
+		case errors.Is(err, database.ErrGroupNotFound):
 			http.Error(w, "Group not found", http.StatusNotFound)
-		case fmt.Errorf("member not found in group"):
+		case errors.Is(err, database.ErrMemberNotFoundInGroup):
 			http.Error(w, "Member not in group", http.StatusNotFound)
 		default:
 			http.Error(w, err.Error(), http.StatusInternalServerError)
