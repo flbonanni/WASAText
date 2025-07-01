@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"strconv"
 	"time"
 )
@@ -24,6 +25,10 @@ func (db *appdbimpl) SendMessage(conversationId string, m Message) (Message, err
 		m.Timestamp,
 		m.SenderID,
 	)
+
+	if err != nil {
+		return m, err
+	}
 
 	lastInsertID, err := res.LastInsertId()
 	if err != nil {
@@ -55,7 +60,7 @@ func (db *appdbimpl) ForwardMessage(
 		&orig.SenderID, // string, ok per scan
 	)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return orig, ErrMessageDoesNotExist
 		}
 		return orig, err

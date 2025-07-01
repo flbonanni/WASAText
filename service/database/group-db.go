@@ -54,6 +54,9 @@ func (db *appdbimpl) UpdateGroupPhoto(groupId string, adminID uint64, photoData 
 
 	// 3) Controlla quante righe sono state modificate
 	affected, err := res.RowsAffected()
+	if err != nil {
+		return err // Restituisci errore se RowsAffected fallisce
+	}
 	log.Printf("Trying to update group %s with admin ID %d", groupId, adminID)
 	log.Printf("Rows affected: %d", affected)
 	if affected == 0 {
@@ -139,7 +142,13 @@ func (db *appdbimpl) RemoveMemberFromGroup(groupId string, memberUsername string
 		return err
 	}
 	members := strings.Split(membersStr, ",")
-	var updatedMembers []string
+
+	capacity := len(members)
+	if capacity > 0 { // Se c'è almeno un membro, la capacità massima può essere len(members)-1 (se rimuoviamo)
+		capacity--
+	}
+	updatedMembers := make([]string, 0, capacity) // Inizializza con lunghezza 0 ma capacità 'capacity'
+
 	found := false
 	for _, m := range members {
 		if m == memberUsername {

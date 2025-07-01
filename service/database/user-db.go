@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 )
 
 func (db *appdbimpl) CreateUser(u User) (User, error) {
@@ -11,7 +12,7 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 		var user User
 		err = db.c.QueryRow(`SELECT id, username FROM users WHERE username = ?`, u.CurrentUsername).Scan(&user.ID, &user.CurrentUsername)
 		if err != nil {
-			if err == sql.ErrNoRows {
+			if errors.Is(err, sql.ErrNoRows) {
 				// Se l'utente non esiste, restituisci l'errore originale dell'INSERT
 				return User{}, err
 			}
