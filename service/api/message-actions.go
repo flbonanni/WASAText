@@ -169,7 +169,7 @@ func (rt *_router) deleteMessage(w http.ResponseWriter, r *http.Request, ps http
 
 	// 3) Chiamata al DB
 	if err := rt.db.DeleteMessage(conversationID, messageID, token); err != nil {
-		if err == database.ErrMessageDoesNotExist {
+		if errors.Is(err, database.ErrMessageDoesNotExist) {
 			http.Error(w, "Message not found", http.StatusNotFound)
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
