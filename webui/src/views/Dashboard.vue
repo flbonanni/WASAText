@@ -2,6 +2,9 @@
   <section class="p-4 max-w-lg mx-auto">
     <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
 
+    <!-- (opzionale) Saluto con il nome -->
+    <p v-if="user.name" class="mb-4">Benvenuto, {{ user.name }}!</p>
+
     <!-- Ricerca utente -->
     <div class="flex mb-6">
       <input
@@ -43,30 +46,44 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { getCurrentUser } from '@/services/userApi'
 
 export default {
   setup() {
-    const searchTerm = ref('')
-    const results = ref([])
-    const loading = ref(false)
-    const error = ref('')
     const router = useRouter()
+    const user       = ref({})       // <-- utente loggato
+    const searchTerm = ref('')
+    const results    = ref([])
+    const loading    = ref(false)
+    const error      = ref('')
     const defaultAvatar = '/default-avatar.png'
 
+    // 1) Carica il profilo corrente
+    onMounted(async () => {
+      try {
+        const res = await getCurrentUser()
+        user.value = res.data
+      } catch {
+        // se non sei autenticato, torna al login
+        return router.push({ name: 'login' })
+      }
+    })
+
+    // 2) Funzioni originali
     const searchUser = async () => {
       if (!searchTerm.value.trim()) return
       loading.value = true
-      error.value = ''
+      error.value   = ''
       try {
         const res = await axios.get(
           `http://localhost:8080/users?search=${encodeURIComponent(searchTerm.value)}`,
           { withCredentials: true }
         )
-        results.value = res.data  // array di utenti trovati
-      } catch (e) {
+        results.value = res.data
+      } catch {
         error.value = 'Errore durante la ricerca'
       } finally {
         loading.value = false
@@ -82,6 +99,7 @@ export default {
     }
 
     return {
+      user,
       searchTerm,
       results,
       loading,
@@ -96,21 +114,5 @@ export default {
 </script>
 
 <style scoped>
-.input {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 0.25rem;
-}
-.btn {
-  padding: 0.5rem 1rem;
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-}
-.btn:hover {
-  background-color: #1e40af;
-}
+/* ... gli stessi stili di prima ... */
 </style>

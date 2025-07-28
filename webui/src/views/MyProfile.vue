@@ -1,35 +1,25 @@
+<!-- webui/src/views/MyProfile.vue -->
 <template>
   <section class="p-4 max-w-md mx-auto">
     <h2 class="text-2xl mb-4">My Profile</h2>
     <img :src="user.avatarUrl" class="w-24 h-24 rounded-full mb-4" />
     <p class="font-semibold">{{ user.name }}</p>
-    <button @click="changePhoto" class="btn mt-2">Cambia foto</button>
-    <button @click="changeName"  class="btn mt-2">Cambia nome</button>
+    <!-- bottoni per cambiare -->
   </section>
 </template>
 
 <script>
-import axios from 'axios'
-import { inject, ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { getCurrentUser } from '@/services/userApi'
 
 export default {
   setup() {
-    const user = inject('currentUser')
-    const changePhoto = async () => {
-      const url = prompt('Nuova URL foto:')
-      if (url) {
-        await axios.put('http://localhost:8080/me', { avatarUrl: url }, { withCredentials: true })
-        user.avatarUrl = url
-      }
-    }
-    const changeName = async () => {
-      const name = prompt('Nuovo nome:')
-      if (name) {
-        await axios.put('http://localhost:8080/me', { name }, { withCredentials: true })
-        user.name = name
-      }
-    }
-    return { user, changePhoto, changeName }
+    const user = ref({})
+    onMounted(async () => {
+      const res = await getCurrentUser()
+      user.value = res.data
+    })
+    return { user }
   }
 }
 </script>
