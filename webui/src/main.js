@@ -4,6 +4,8 @@ import router from './router'
 import axios from 'axios'
 import './index.css'
 
+axios.defaults.baseURL = '/api'
+
 // Dì a axios di inviare i cookie se userai anche sessioni, ma per header non serve
 axios.defaults.withCredentials = true
 

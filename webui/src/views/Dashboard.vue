@@ -78,10 +78,7 @@ export default {
       loading.value = true
       error.value   = ''
       try {
-        const res = await axios.get(
-          `http://localhost:8080/users?search=${encodeURIComponent(searchTerm.value)}`,
-          { withCredentials: true }
-        )
+        const res = await axios.get('/users?search=' + encodeURIComponent(searchTerm.value))
         results.value = res.data
       } catch {
         error.value = 'Errore durante la ricerca'
