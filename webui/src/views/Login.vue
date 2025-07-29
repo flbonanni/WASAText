@@ -16,6 +16,7 @@ export default {
     const router = useRouter()
 
     function doLogin() {
+      console.log('cliccato login, username =', username.value)
       if (!username.value.trim()) return
       // Salva l’ID utente in localStorage
       localStorage.setItem('userId', username.value.trim())
