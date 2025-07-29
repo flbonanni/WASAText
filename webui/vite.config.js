@@ -1,18 +1,21 @@
-import { fileURLToPath, URL } from 'node:url'
-
+// webui/vite.config.js
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueDevTools from 'vite-plugin-vue-devtools'
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    vueDevTools(),
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    },
+  plugins: [vue()],
+  server: {
+    proxy: {
+      // tutte le richieste a /api/* saranno rimappate su http://localhost:8080/*
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+        rewrite: path => path.replace(/^\/api/, '')
+      }
+    }
   },
+  resolve: {
+    alias: { '@': '/src' }
+  }
 })
