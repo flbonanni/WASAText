@@ -1,24 +1,10 @@
 <template>
   <router-view />
 </template>
-
 <script>
-import axios from 'axios'
-import { provide } from 'vue'
-
-export default {
-  name: 'App',
-  async created() {
-    axios.defaults.withCredentials = true
-    try {
-      const res = await axios.get('http://localhost:8080/me')
-      provide('currentUser', res.data) 
-    } catch {
-      // nessun utente loggato
-    }
-  }
-}
+export default { name: 'App' }
 </script>
+
 
 <style scoped>
 header {
