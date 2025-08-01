@@ -1,16 +1,30 @@
 /* index.css */
 
-/* 1) Importa le variabili di colore e i font */
-@import './styles/variables.css';
+/* 1) Import dei font */
+@import url('https://fonts.googleapis.com/css?family=Roboto:700|Google+Sans+Code:400&display=swap');
 
-/* 2) Reset minimale */
-*, *::before, *::after {
+/* 2) Palette e variabili globali */
+:root {
+  --text:       #fffaf0;
+  --background: #0e2146;
+  --primary:    #c9e441;
+  --secondary:  #e5e2e2;
+  --accent:     #93f0cf;
+
+  --font-body:    'Google Sans Code', monospace;
+  --font-heading: 'Roboto', sans-serif;
+}
+
+/* 3) Reset minimale */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* 3) Body e HTML */
+/* 4) Body e HTML */
 html, body {
   height: 100%;
   background-color: var(--background);
@@ -20,14 +34,18 @@ html, body {
   line-height: 1.5;
 }
 
-/* 4) Titoli */
+/* 5) Titoli */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text);
   margin-bottom: 0.5em;
 }
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+/* … e così via … */
 
-/* 5) Link */
+/* 6) Link */
 a {
   color: var(--primary);
   text-decoration: none;
@@ -36,7 +54,7 @@ a:hover {
   color: var(--accent);
 }
 
-/* 6) Componenti base */
+/* 7) Componenti base */
 .btn {
   display: inline-block;
   padding: 0.5rem 1rem;
