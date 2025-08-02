@@ -98,6 +98,4 @@ a:hover {
   background-clip: text;
   color: transparent;
   text-align: center;
-  /* Ombra esterna per migliorare la leggibilità */
-  text-shadow: 0 0 4px rgba(0,0,0,0.6);
 }
