@@ -85,3 +85,12 @@ a:hover {
   margin: 0 auto;
   padding: 1rem;
 }
+
+/* Gradient title */
+.gradient-title {
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+}
