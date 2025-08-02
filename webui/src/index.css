@@ -90,11 +90,13 @@ a:hover {
 .gradient-title {
   background: linear-gradient(
     to right,
-    #c9e441,
-    #00f0a0,
-    #1de9b6
+    var(--primary),
+    var(--accent)
   );
+  /* supporto WebKit */
   -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* supporto standard / Firefox */
   background-clip: text;
   color: transparent;
   text-align: center;

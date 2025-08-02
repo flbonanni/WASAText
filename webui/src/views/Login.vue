@@ -1,19 +1,12 @@
 <template>
   <section class="container mx-auto mt-20 max-w-xs p-6 bg-white bg-opacity-10 rounded-lg">
-    <h2 class="text-2xl mb-6 gradient-title text-center">Login</h2>
-
     <input
       v-model="username"
       placeholder="Username"
       class="input w-full mb-4"
     />
 
-    <button
-      @click="doLogin"
-      class="btn w-full py-2"
-    >
-      Entra
-    </button>
+    <button @click="doLogin" class="btn w-full py-2">Entra</button>
   </section>
 </template>
 

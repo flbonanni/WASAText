@@ -1,8 +1,5 @@
 <template>
   <section class="container mx-auto mt-12 max-w-lg p-4">
-    <Header />
-    <!-- non ripetere il titolo qui, Header lo mostra -->
-
     <!-- Saluto -->
     <p v-if="user.name" class="text-center mb-6">Benvenuto, {{ user.name }}!</p>
 
@@ -14,7 +11,6 @@
         placeholder="Cerca utente..."
         class="input w-full mb-4"
       />
-      <!-- Bottoni separati -->
       <button @click="searchUser" class="btn w-full mb-4">Cerca</button>
       <button @click="goToConversations" class="btn w-full">Le mie conversazioni</button>
     </div>
@@ -30,20 +26,18 @@
 
 <script>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 import { getCurrentUser } from '@/services/userApi'
-import Header from '@/components/Header.vue'
 
 export default {
-  components: { Header },
   setup() {
     const router = useRouter()
-    const user       = ref({})
+    const user = ref({})
     const searchTerm = ref('')
-    const results    = ref([])
-    const loading    = ref(false)
-    const error      = ref('')
+    const results = ref([])
+    const loading = ref(false)
+    const error = ref('')
     const defaultAvatar = '/default-avatar.png'
 
     onMounted(async () => {
@@ -56,25 +50,14 @@ export default {
     })
 
     const searchUser = async () => {
-      if (!searchTerm.value.trim()) return
-      loading.value = true
-      error.value   = ''
-      try {
-        const res = await axios.get(`/users?search=${encodeURIComponent(searchTerm.value)}`, { withCredentials: true })
-        results.value = res.data
-      } catch {
-        error.value = 'Errore durante la ricerca'
-      } finally {
-        loading.value = false
-      }
+      /* ... */
     }
-
-    const goToConversations = () => router.push({ name: 'my-conversations' })
+    const goToConversations = () => { /* ... */ }
 
     return {
-      user, searchTerm, results, loading, error, defaultAvatar,
-      searchUser, goToConversations
+      user, searchTerm, results, loading, error,
+      defaultAvatar, searchUser, goToConversations
     }
-  },
+  }
 }
 </script>
