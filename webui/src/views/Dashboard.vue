@@ -1,25 +1,27 @@
 <template>
-  <section class="p-4 max-w-lg mx-auto">
-    <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
+  <section class="container mx-auto mt-12 max-w-lg p-4">
+    <!-- Titolo centrato con gradiente -->
+    <h2 class="text-3xl font-bold mb-6 gradient-title text-center">Dashboard</h2>
 
-    <!-- (opzionale) Saluto con il nome -->
-    <p v-if="user.name" class="mb-4">Benvenuto, {{ user.name }}!</p>
+    <!-- Saluto -->
+    <p v-if="user.name" class="text-center mb-6">Benvenuto, {{ user.name }}!</p>
 
     <!-- Ricerca utente -->
-    <div class="flex mb-6">
+    <div class="max-w-md mx-auto mb-8">
       <input
         v-model="searchTerm"
         @keyup.enter="searchUser"
         placeholder="Cerca utente..."
-        class="flex-1 input"
+        class="input w-full mb-4"
       />
-      <button @click="searchUser" class="btn ml-2">Cerca</button>
+      <button @click="searchUser" class="btn w-full mb-2">Cerca</button>
+      <button @click="goToConversations" class="btn w-full">Le mie conversazioni</button>
     </div>
 
     <!-- Risultati ricerca -->
     <div v-if="loading" class="text-center mb-4">Ricerca in corso…</div>
     <div v-else-if="error" class="text-red-500 mb-4">{{ error }}</div>
-    <ul v-else class="space-y-2 mb-8">
+    <ul v-else class="space-y-2 mb-8 max-w-md mx-auto">
       <li
         v-for="u in results"
         :key="u.id"
@@ -37,11 +39,6 @@
         </div>
       </li>
     </ul>
-
-    <!-- Pulsante My Conversations -->
-    <button @click="goToConversations" class="btn">
-      Le mie conversazioni
-    </button>
   </section>
 </template>
 

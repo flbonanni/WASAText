@@ -81,16 +81,23 @@ a:hover {
 }
 
 .container {
-  max-width: 48rem;
-  margin: 0 auto;
+  max-width: 48rem;  /* 768px */
   padding: 1rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* Gradient title */
 .gradient-title {
-  background: linear-gradient(to right, var(--primary), var(--accent));
+  background: linear-gradient(
+    to right,
+    #c9e441,
+    #00f0a0,
+    #1de9b6
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   text-align: center;
+  /* Ombra esterna per migliorare la leggibilità */
+  text-shadow: 0 0 4px rgba(0,0,0,0.6);
 }
