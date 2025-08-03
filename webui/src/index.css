@@ -99,30 +99,29 @@ a:hover {
 }
 
 .gradient-title {
-  /* forza il blocco inline per background-clip */
-  display: inline-block;
+  display: block;           /* blocco a tutta larghezza */
+  width: 100%;
+  text-align: center;       /* centra il testo */
 
-  white-space: nowrap;
-  line-height: 1.3;
-  font-size: var(--h1);
+  /* tipografia */
+  font-size: 3rem;          /* ingrandisci a 3rem (48px) */
   font-weight: 700;
-  letter-spacing: 0;
+  line-height: 1.2;
+  white-space: nowrap;      /* niente a capo */
 
-  /* il gradiente vero e proprio */
+  /* gradiente */
   background: linear-gradient(
     120deg,
     var(--primary),
     var(--accent)
   );
 
-  /* WebKit */
+  /* ritaglia il gradient solo sul testo */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-
-  /* Standard */
   background-clip: text;
   color: transparent;
 
-  /* ombra leggera per far risaltare il testo */
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+  /* ombra per contrasto */
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
 }
