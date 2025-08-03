@@ -121,7 +121,4 @@ a:hover {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: transparent;
-
-  /* ombra per contrasto */
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
 }
