@@ -34,13 +34,21 @@ html, body {
   line-height: 1.5;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+}
+
 /* 5) Titoli */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text);
   margin-bottom: 0.5em;
 }
-h1 { font-size: 2.5rem; }
+h1 { 
+  font-size: 2.5rem;
+  text-align: center;
+ }
 h2 { font-size: 2rem; }
 h3 { font-size: 1.75rem; }
 /* … e così via … */
@@ -54,18 +62,31 @@ a:hover {
   color: var(--accent);
 }
 
-/* 7) Componenti base */
 .btn {
-  display: inline-block;
-  padding: 0.5em 2em; 
+  /* reset aspetto nativo */
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+
+  /* display flex per centraggio interno */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* padding uniforme */
+  padding: 0.5em 2em;
+
+  /* stile base */
   background-color: var(--primary);
   color: var(--background);
   border: none;
   border-radius: 0.375rem;
   cursor: pointer;
-  transition: background-color 0.2s;
   font-family: var(--font-body);
+  font-size: 1rem;
+  transition: background-color 0.2s;
 }
+
 .btn:hover {
   background-color: var(--accent);
 }
@@ -87,38 +108,57 @@ a:hover {
   margin-right: auto;
 }
 
-.gradient-title {
-  background: linear-gradient(120deg, var(--primary), var(--accent));
-  /* supporto WebKit */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  /* supporto standard / Firefox */
-  background-clip: text;
-  color: transparent;
-  text-align: center;
+.header-with-gradient {
+  /* Assicura che l'header occupi l'intera larghezza disponibile */
+  width: 100%;
+  
+  /* Usa Flexbox per un'allineamento facile */
+  display: flex;
+  
+  /* Centra il contenuto orizzontalmente (il testo) */
+  justify-content: center;
+  
+  /* Centra il contenuto verticalmente (se c'è più di una riga) */
+  align-items: center;
+  
+  /* Aggiunge padding per dare un po' di spazio interno, come `py-4` di Tailwind */
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  
+  /* Imposta il colore del testo di default (sarà sovrascritto dal gradiente sul titolo) */
+  color: var(--text); 
+  margin: 0;
+  
+  /* Puoi aggiungere un colore di sfondo solido se non vuoi il gradiente */
+  background-color: var(--background);
 }
 
+/*
+  Questa classe applica il gradiente direttamente al testo.
+*/
 .gradient-title {
-  display: block;           /* blocco a tutta larghezza */
-  width: 100%;
-  text-align: center;       /* centra il testo */
-
-  /* tipografia */
-  font-size: 3rem;          /* ingrandisci a 3rem (48px) */
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;      /* niente a capo */
-
-  /* gradiente */
-  background: linear-gradient(
-    120deg,
-    var(--primary),
-    var(--accent)
-  );
-
-  /* ritaglia il gradient solo sul testo */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  /* Il gradiente che vuoi applicare al testo */
+  background: linear-gradient(to right, #aaff00, #00ffff);
+  
+  /* Rende il testo trasparente in modo che il gradiente sia visibile */
   color: transparent;
+  
+  /* Ritaglia il gradiente in base alla forma del testo */
+  -webkit-background-clip: text; /* Per browser basati su WebKit (Chrome, Safari) */
+  background-clip: text;
+  
+  /* Rende l'elemento un blocco in linea per assicurare che il gradiente si estenda */
+  /* Non usare `display: inline-block` se vuoi che il gradiente si estenda oltre il testo */
+  /* Se vuoi che il gradiente si estenda su tutta la larghezza dell'h1, usa `display: block` */
+  /* Per questo caso specifico, l'h1 è già un blocco, quindi non serve `inline-block` */
+  
+  /* Assicurati che il testo sia centrato se l'h1 non è a piena larghezza */
+  text-align: center; /* Questo è importante se l'h1 non occupa tutta la larghezza */
+}
+
+/* Stilizza il titolo all'interno dell'header. */
+.header-with-gradient h1 {
+  font-size: 2.5rem; /* Ho ripristinato la tua dimensione originale di h1 */
+  margin: 0;
+  /* Rimuovi `text-align: center;` da qui, lo gestisce il flexbox del genitore */
 }

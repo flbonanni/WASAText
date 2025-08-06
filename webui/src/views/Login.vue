@@ -6,7 +6,7 @@
       class="input w-full mb-4"
     />
 
-    <button @click="doLogin" class="btn w-full py-2">Entra</button>
+    <button @click="doLogin" class="btn w-full py-2">Login</button>
   </section>
 </template>
 
